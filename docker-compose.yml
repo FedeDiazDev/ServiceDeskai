@@ -1,0 +1,51 @@
+services:  
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend_container
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/usr/src/app
+    depends_on:
+      - backend
+    networks:
+      - deskai-network
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend_container
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./backend:/usr/src/app
+    networks:
+      - deskai-network
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - BACKEND_PORT=${BACKEND_PORT}
+      - MONGODB_URI=${MONGODB_URI}
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:6.0
+    container_name: mongo_container
+    volumes:
+      - mongodb:/data/db
+    networks:
+      - deskai-network
+    restart: unless-stopped
+
+
+volumes:
+  mongodb:
+
+networks:
+  deskai-network:
+    driver: bridge
