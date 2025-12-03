@@ -1,25 +1,19 @@
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import { UserModel } from '../models/User';
 
-dotenv.config();
-
-const MONGO_URI = process.env.MONGODB_URI as string;
-
-
-if (!MONGO_URI) {
-  throw new Error('MONGODB_URI no está definido en las variables de entorno');
-}
 export const connectDB = async () => {
-  try {
-    await mongoose.connect(MONGO_URI);
-    console.log(' MongoDB conectado exitosamente');
+    const MONGO_URI = process.env.MONGODB_URI as string;
+    
+    try {
+        await mongoose.connect(MONGO_URI);
+        console.log('MongoDB conectado exitosamente');
         
-    await createDefaultUser();
-  } catch (error) {
-    console.error('Error conectando a MongoDB:', error);
-    process.exit(1);
-  }
+        // Crear usuario de ejemplo si no existe
+        await createDefaultUser();
+    } catch (error) {
+        console.error('Error conectando a MongoDB:', error);
+        process.exit(1);
+    }
 };
 
 const createDefaultUser = async () => {
@@ -31,7 +25,7 @@ const createDefaultUser = async () => {
                 name: 'Admin',
                 surname: 'User',
                 email: 'admin@deskai.com',
-                password: 'admin123',
+                password: 'admin123', // TODO: Hashear con bcrypt en producción
                 role: 'admin'
             });
             console.log('Usuario admin creado: admin@deskai.com');

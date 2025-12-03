@@ -42,6 +42,20 @@ services:
       - deskai-network
     restart: unless-stopped
 
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo_express_container
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_URL=${MONGODB_URI}
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin123
+    depends_on:
+      - mongodb
+    networks:
+      - deskai-network
+    restart: unless-stopped
 
 volumes:
   mongodb:
