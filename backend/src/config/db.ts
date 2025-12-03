@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { UserModel } from '../models/User';
+import { TicketModel } from '../models/Ticket';
 
 dotenv.config();
 
@@ -15,14 +16,15 @@ export const connectDB = async () => {
     await mongoose.connect(MONGO_URI);
     console.log(' MongoDB conectado exitosamente');
         
-    await createDefaultUser();
+    await createAdminUser();
+    // await createDefaultTicket();
   } catch (error) {
     console.error('Error conectando a MongoDB:', error);
     process.exit(1);
   }
 };
 
-const createDefaultUser = async () => {
+const createAdminUser = async () => {
     try {
         const existingUser = await UserModel.findOne({ email: 'admin@deskai.com' });
         
@@ -40,3 +42,21 @@ const createDefaultUser = async () => {
         console.error('Error creando usuario por defecto:', error);
     }
 };
+
+// const createDefaultTicket = async () => {
+//     try {
+//         const existingTicket = await TicketModel.findOne({ title: 'Ticket de ejemplo' });
+        
+//         if (!existingTicket) {
+//             await TicketModel.create({
+//                 title: 'Ticket de ejemplo',
+//                 description: 'Este es un ticket de ejemplo creado por defecto.',
+//                 status: 'open',
+//                 priority: 'medium'
+//             });
+//             console.log('Ticket de ejemplo creado');
+//         }
+//     } catch (error) {
+//         console.error('Error creando ticket por defecto:', error);
+//     }
+// };
