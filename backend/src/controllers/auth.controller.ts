@@ -1,29 +1,30 @@
 import { Request, Response } from 'express';
 import { UserModel } from '../models/User';
+import { authService } from '../services/auth.service';
 
 export const registerUser = async (req: Request, res: Response) => {
 
-    const {name, surname, email, password, role} = req.body;
-    const encryptedPassword = password; // TODO: Hashear con bcrypt en producción
-    try{
-        const existingUser = await UserModel.findOne({ email });
-        if (existingUser){
-            return  res.status(400).json({ message: 'El usuario ya existe' });
-        }
-        const newUser = new UserModel({
-            name,
-            surname,
-            email,
-            encryptedPassword,
-            role
+    const { name, surname, email, password, role } = req.body;
+    if (!name || !surname || !email || !password) {
+        return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    try {
+        const newUser = await authService.registerUser({ name, surname, email, password, role });
+        return res.status(201).json({
+            success: true, message: 'User registered successfully', data: {
+                id: newUser._id,
+                email: newUser.email
+            }
         });
-        await newUser.save();
-        res.status(201).json({ message: 'Usuario registrado exitosamente' });
-    }catch(error){
-        console.error('Error registrando usuario:', error);
-        res.status(500).json({ message: 'Error registrando usuario' });
+    } catch (error: any) {
+        if (error.message === 'USER_ALREADY_EXISTS') {
+            return res.status(400).json({ message: 'User already exists' });
+        }
+        console.error('Error in registration:', error);
+        return res.status(500).json({ message: 'Internal server error' });
     }
 
 };
 
-export const loginUser = async (req: Request, res: Response) => {};
+export const loginUser = async (req: Request, res: Response) => { };
