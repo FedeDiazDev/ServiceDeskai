@@ -2,6 +2,7 @@ import express, { Express, NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db';
+import apiRouter from './routes/index';
 
 dotenv.config();
 
@@ -24,6 +25,8 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error(err);
   res.status(500).json({ error: 'Error interno del servidor' });
 });
+
+app.use('/api', apiRouter);
 
 const startServer = async () => {
   await connectDB();
