@@ -1,30 +1,16 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
-import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { connectDB } from './config/db';
 
 dotenv.config();
 
 const app: Express = express();
 const PORT = process.env.BACKEND_PORT ;
-const MONGO_URI = process.env.MONGODB_URI as string;
 
 app.use(cors());
 app.use(express.json());
 
-const connectDB = async () => {
-  try {
-    await mongoose.connect(MONGO_URI);
-    console.log(' MongoDB conectado exitosamente');
-  } catch (error) {
-    console.error('Error conectando a MongoDB:', error);
-    process.exit(1);
-  }
-};
-
-app.get('/api/health', (req: Request, res: Response) => {
-  res.json({ status: 'OK', message: 'Backend está funcionando' });
-});
 
 app.get('/api/test', (req: Request, res: Response) => {
   res.json({ message: 'Ruta de prueba funcionando' });
