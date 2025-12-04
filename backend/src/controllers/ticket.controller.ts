@@ -18,16 +18,16 @@ export const createTicket = async (req: Request, res: Response) => {
             createdBy
         });
         return res.status(201).json(newTicket);
-    }catch(error:any){
+    } catch (error: any) {
         if (error.message === 'TICKET_CREATION_FAILED') {
             return res.status(400).json({ message: 'Ticket creation failed' });
         }
         console.error('Error in ticket creation:', error);
         return res.status(500).json({ message: 'Internal server error' });
     }
- };
+};
 
-export const getTickets = async (req: Request, res: Response) => { 
+export const getTickets = async (req: Request, res: Response) => {
     try {
         const tickets = await ticketService.getTickets();
         return res.status(200).json(tickets);
@@ -40,7 +40,7 @@ export const getTickets = async (req: Request, res: Response) => {
     }
 };
 
-export const getTicketById = async (req: Request, res: Response) => { 
+export const getTicketById = async (req: Request, res: Response) => {
     const ticketId = req.params.id;
     try {
         const ticket = await ticketService.getTicketById(ticketId);
@@ -55,7 +55,7 @@ export const getTicketById = async (req: Request, res: Response) => {
 };
 
 
-export const updateTicket = async (req: Request, res: Response) => { 
+export const updateTicket = async (req: Request, res: Response) => {
     const ticketId = req.params.id;
     const updateData = req.body;
     try {
@@ -72,7 +72,14 @@ export const updateTicket = async (req: Request, res: Response) => {
 
 export const deleteTicket = async (req: Request, res: Response) => {
     const ticketId = req.params.id;
-    try{
-        const deleteTicket = await ticketService.deleteTicket(ticketId);
+    try {
+        const deletedTicket = await ticketService.deleteTicket(ticketId);
+        return res.status(200).json(deletedTicket);
+    } catch (error: any) {
+        if (error.message === 'TICKET_DELETION_FAILED') {
+            return res.status(404).json({ message: 'Ticket deletion failed' });
+        }
+        console.error('Error deleting ticket:', error);
+        return res.status(500).json({ message: 'Internal server error' });
     }
- };
+};
