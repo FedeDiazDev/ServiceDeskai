@@ -19,7 +19,7 @@ export class AuthService {
         return jwt.sign({ id: userId }, secret, { expiresIn: '7d' });
     }
 
-    async registerUser(userData: RegisterUserDTO) {
+    async registerUser(userData: RegisterUserDTO): Promise<IUser> {
         const { name, surname, email, password, role } = userData;
 
         const existingUser = await UserModel.findOne({ email });
@@ -40,7 +40,7 @@ export class AuthService {
         return newUser;
     }
 
-    async loginUser(userData: LoginUserDTO) {
+    async loginUser(userData: LoginUserDTO): Promise<string> {
         const { email, password } = userData;
 
         const existingUser = await UserModel.findOne({ email });

@@ -1,15 +1,15 @@
 import { TicketModel, ITicket } from "../models/Ticket";
 
-
 type CreateTicketDTO = Pick<ITicket, 'title' | 'description' | 'priority' | 'tags' | 'attachments'> & {
     createdBy: string;
 };
+
 export class TicketService {
 
-    async createTicket ( ticketData: CreateTicketDTO) {
+    async createTicket(ticketData: CreateTicketDTO): Promise<ITicket> {
         const { title, description, priority, tags, attachments, createdBy } = ticketData;
 
-        const newTicket = await TicketModel.create({
+        const newTicket : ITicket | null = await TicketModel.create({
             title,
             description,
             priority,
@@ -23,32 +23,33 @@ export class TicketService {
         return newTicket;
     }
 
-    async getTickets(){
-        const tickets = await TicketModel.find();
+    async getTickets(): Promise<ITicket[]> {
+        const tickets : ITicket[] | null = await TicketModel.find();
         if (!tickets) {
             throw new Error('TICKETS_NOT_FOUND');
         }
         return tickets;
     }
 
-    async getTicketById(ticketId : string){
-        const ticket = await TicketModel.findById(ticketId);
-        if (!ticket){
+    async getTicketById(ticketId: string): Promise<ITicket> {
+        const ticket : ITicket | null = await TicketModel.findById(ticketId);
+        if (!ticket) {
             throw new Error('TICKET_NOT_FOUND');
         }
         return ticket;
     }
 
-    async updateTicket(ticketId: string, updateData: Partial<ITicket>){
-        const updatedTicket = await TicketModel.findByIdAndUpdate(ticketId, updateData, { new: true });
-        if (!updatedTicket){
+    async updateTicket(ticketId: string, updateData: Partial<ITicket>): Promise<ITicket> {
+        const updatedTicket : ITicket | null = await TicketModel.findByIdAndUpdate(ticketId, updateData, { new: true });
+        if (!updatedTicket) {
             throw new Error('TICKET_UPDATE_FAILED');
         }
         return updatedTicket;
     }
-    async deleteTicket (ticketId: string){
-        const deletedTicket = await TicketModel.findByIdAndDelete(ticketId);
-        if (!deletedTicket){
+
+    async deleteTicket(ticketId: string): Promise<ITicket> {
+        const deletedTicket : ITicket | null = await TicketModel.findByIdAndDelete(ticketId);
+        if (!deletedTicket) {
             throw new Error('TICKET_DELETION_FAILED');
         }
         return deletedTicket;

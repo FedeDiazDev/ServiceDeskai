@@ -9,8 +9,6 @@ export interface ITicket extends Document{
     priority: 'low' | 'medium' | 'high' | 'urgent';
     tags: string[];
     attachments: string[];
-    createdAt: Date;
-    updatedAt: Date;
 }
 
 const ticketSchema = new Schema<ITicket>({

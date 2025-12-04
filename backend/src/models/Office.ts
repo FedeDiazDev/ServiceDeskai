@@ -4,12 +4,10 @@ interface Ioffice extends Document{
     name: string;
     location: string;
     phone: string;
-    createdAt: Date;
-    updatedAt: Date;
 }
 const officeSchema = new Schema<Ioffice>({
-    name: { type: String, required: true },
-    location: { type: String, required: true },
+    name: { type: String, required: true, trim: true },
+    location: { type: String, required: true, trim: true },
     phone: { type: String, required: true }
 }, { timestamps: true });
 

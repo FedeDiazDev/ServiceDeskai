@@ -4,7 +4,7 @@ import { authenticateToken } from "../middlewares/auth.middleware"
 
 const router = Router();
 
-
+//TODO: crear funcion de actualizar solo esado del ticket
 router.use(authenticateToken);
 router.post('/create', createTicket);
 router.get('/', getTickets);
