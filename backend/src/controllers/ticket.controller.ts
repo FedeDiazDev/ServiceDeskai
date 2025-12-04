@@ -37,7 +37,7 @@ export const getTickets = async (req: Request, res: Response): Promise<void> => 
         res.status(200).json(tickets);
         return;
     } catch (error: any) {
-        if (!error.message) {
+        if (error.message === 'TICKETS_NOT_FOUND') {
             res.status(404).json({ message: 'No tickets found' });
             return;
         }

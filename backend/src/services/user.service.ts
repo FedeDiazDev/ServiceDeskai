@@ -41,3 +41,5 @@ export class UserService {
         return deletedUser;
      }
 }
+
+export const userService = new UserService();
