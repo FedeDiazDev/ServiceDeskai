@@ -46,6 +46,13 @@ export class TicketService {
         }
         return updatedTicket;
     }
+    async deleteTicket (ticketId: string){
+        const deletedTicket = await TicketModel.findByIdAndDelete(ticketId);
+        if (!deletedTicket){
+            throw new Error('TICKET_DELETION_FAILED');
+        }
+        return deletedTicket;
+    }
 }
 
 export const ticketService = new TicketService();
