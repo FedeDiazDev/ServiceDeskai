@@ -1,14 +1,9 @@
 import { Request, Response } from "express";
 import { ticketService } from "../services/ticket.service";
+import { CreateTicketInput, ListTicketsQuery, UpdateTicketInput, UpdateStatusInput } from '../schemas/ticket.schema';
 
 export const createTicket = async (req: Request, res: Response): Promise<void> => {
-    const { title, description, priority, tags, attachments } = req.body;
-    const createdBy = (req.user as { id: string }).id;
-
-    if (!title || !description) {
-        res.status(400).json({ message: 'Missing required fields' });
-        return;
-    }
+    const { title, description, priority, tags, attachments, createdBy } = req.body as CreateTicketInput;
     try {
         const newTicket = await ticketService.createTicket({
             title,
@@ -32,6 +27,8 @@ export const createTicket = async (req: Request, res: Response): Promise<void> =
 };
 
 export const getTickets = async (req: Request, res: Response): Promise<void> => {
+    const _query = req.query as unknown as ListTicketsQuery;
+    // TODO: use _query.page, _query.limit, _query.status, _query.priority in service
     try {
         const tickets = await ticketService.getTickets();
         res.status(200).json(tickets);
@@ -48,7 +45,7 @@ export const getTickets = async (req: Request, res: Response): Promise<void> => 
 };
 
 export const getTicketById = async (req: Request, res: Response): Promise<void> => {
-    const ticketId = req.params.id;
+    const ticketId = req.params.id as string;
     try {
         const ticket = await ticketService.getTicketById(ticketId);
         res.status(200).json(ticket);
@@ -66,8 +63,8 @@ export const getTicketById = async (req: Request, res: Response): Promise<void> 
 
 
 export const updateTicket = async (req: Request, res: Response): Promise<void> => {
-    const ticketId = req.params.id;
-    const updateData = req.body;
+    const ticketId = req.params.id as string;
+    const updateData = req.body as UpdateTicketInput;
     try {
         const updatedTicket = await ticketService.updateTicket(ticketId, updateData);
         res.status(200).json(updatedTicket);
@@ -84,13 +81,8 @@ export const updateTicket = async (req: Request, res: Response): Promise<void> =
 };
 
 export const updateTicketStatus = async (req: Request, res: Response): Promise<void> => {
-    const ticketId = req.params.id;
-    const { status } = req.body;
-
-    if (!status) {
-        res.status(400).json({ message: 'Status is required' });
-        return;
-    }
+    const ticketId = req.params.id as string;
+    const { status } = req.body as UpdateStatusInput;
 
     try {
         const updatedTicket = await ticketService.updateTicketStatus(ticketId, status);
@@ -112,7 +104,7 @@ export const updateTicketStatus = async (req: Request, res: Response): Promise<v
 }
 
 export const deleteTicket = async (req: Request, res: Response): Promise<void> => {
-    const ticketId = req.params.id;
+    const ticketId = req.params.id as string;
     try {
         const deletedTicket = await ticketService.deleteTicket(ticketId);
         res.status(200).json(deletedTicket);

@@ -1,25 +1,16 @@
 import { UserModel, IUser } from "../models/User";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-
-
-type RegisterUserDTO = Pick<IUser, 'name' | 'surname' | 'email' | 'password'> & {
-    role?: IUser['role'];
-};
-
-type LoginUserDTO = {
-    email: string;
-    password: string;
-};
+import { RegisterInput, LoginInput } from '../schemas/auth.schema';
 
 export class AuthService {
 
-    private generateToken(userId: string): string {
+    private generateToken(userId: string, role: string): string {
         const secret = process.env.JWT_SECRET as string;
-        return jwt.sign({ id: userId }, secret, { expiresIn: '7d' });
+        return jwt.sign({ id: userId, role }, secret, { expiresIn: '7d' });
     }
 
-    async registerUser(userData: RegisterUserDTO) {
+    async registerUser(userData: RegisterInput) {
         const { name, surname, email, password, role } = userData;
 
         const existingUser = await UserModel.findOne({ email });
@@ -47,7 +38,7 @@ export class AuthService {
         return returnedUser;
     }
 
-    async loginUser(userData: LoginUserDTO): Promise<string> {
+    async loginUser(userData: LoginInput): Promise<string> {
         const { email, password } = userData;
 
         const existingUser = await UserModel.findOne({ email });
@@ -60,7 +51,7 @@ export class AuthService {
             throw new Error('INVALID_CREDENTIALS');
         }
 
-        const token = this.generateToken(existingUser._id.toString());
+        const token = this.generateToken(existingUser._id.toString(), existingUser.role);
         return token;
     }
 }

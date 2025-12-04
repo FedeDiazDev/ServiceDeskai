@@ -1,12 +1,9 @@
 import { TicketModel, ITicket } from "../models/Ticket";
-
-type CreateTicketDTO = Pick<ITicket, 'title' | 'description' | 'priority' | 'tags' | 'attachments'> & {
-    createdBy: string;
-};
+import { CreateTicketInput, UpdateTicketInput } from '../schemas/ticket.schema';
 
 export class TicketService {
 
-    async createTicket(ticketData: CreateTicketDTO): Promise<ITicket> {
+    async createTicket(ticketData: CreateTicketInput): Promise<ITicket> {
         const { title, description, priority, tags, attachments, createdBy } = ticketData;
 
         const newTicket : ITicket | null = await TicketModel.create({
@@ -39,8 +36,8 @@ export class TicketService {
         return ticket;
     }
 
-    async updateTicket(ticketId: string, updateData: Partial<ITicket>): Promise<ITicket> {
-        const updatedTicket : ITicket | null = await TicketModel.findByIdAndUpdate(ticketId, updateData, { new: true });
+    async updateTicket(ticketId: string, updateData: UpdateTicketInput): Promise<ITicket> {
+        const updatedTicket : ITicket | null = await TicketModel.findByIdAndUpdate(ticketId, updateData as any, { new: true });
         if (!updatedTicket) {
             throw new Error('TICKET_UPDATE_FAILED');
         }
