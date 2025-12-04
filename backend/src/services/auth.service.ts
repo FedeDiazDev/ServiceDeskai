@@ -19,7 +19,7 @@ export class AuthService {
         return jwt.sign({ id: userId }, secret, { expiresIn: '7d' });
     }
 
-    async registerUser(userData: RegisterUserDTO): Promise<IUser> {
+    async registerUser(userData: RegisterUserDTO) {
         const { name, surname, email, password, role } = userData;
 
         const existingUser = await UserModel.findOne({ email });
@@ -29,15 +29,22 @@ export class AuthService {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password as string, salt);
 
-        const newUser = await UserModel.create({
+        const newUser: IUser | null = await UserModel.create({
             name,
             surname,
             email,
             password: hashedPassword,
             role
         });
+        const returnedUser = {
+            id : newUser._id,
+            name: newUser.name,
+            surname: newUser.surname,
+            email: newUser.email,
+            role: newUser.role
+        };
 
-        return newUser;
+        return returnedUser;
     }
 
     async loginUser(userData: LoginUserDTO): Promise<string> {
@@ -56,8 +63,6 @@ export class AuthService {
         const token = this.generateToken(existingUser._id.toString());
         return token;
     }
-
-
 }
 
 export const authService = new AuthService();

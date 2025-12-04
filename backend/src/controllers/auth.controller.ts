@@ -13,7 +13,7 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
         const newUser = await authService.registerUser({ name, surname, email, password, role });
         res.status(201).json({
             success: true, message: 'User registered successfully', data: {
-                id: newUser._id,
+                id: newUser.id,
                 email: newUser.email
             }
         });

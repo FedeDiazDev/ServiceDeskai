@@ -47,6 +47,23 @@ export class TicketService {
         return updatedTicket;
     }
 
+    async updateTicketStatus(ticketId: string, status: ITicket['status']): Promise<ITicket> {
+        const validStatuses: ITicket['status'][] = ['open', 'assigned', 'in_progress', 'resolved', 'closed'];
+        if (!validStatuses.includes(status)) {
+            throw new Error('INVALID_STATUS');
+        }
+
+        const updatedTicket: ITicket | null = await TicketModel.findByIdAndUpdate(
+            ticketId,
+            { status },
+            { new: true }
+        );
+        if (!updatedTicket) {
+            throw new Error('TICKET_NOT_FOUND');
+        }
+        return updatedTicket;
+    }
+
     async deleteTicket(ticketId: string): Promise<ITicket> {
         const deletedTicket : ITicket | null = await TicketModel.findByIdAndDelete(ticketId);
         if (!deletedTicket) {

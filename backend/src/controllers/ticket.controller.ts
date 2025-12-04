@@ -43,59 +43,87 @@ export const getTickets = async (req: Request, res: Response): Promise<void> => 
         }
         console.error('Error fetching tickets:', error);
         res.status(500).json({ message: 'Internal server error' });
-        return ; 
+        return;
     }
 };
 
-export const getTicketById = async (req: Request, res: Response) : Promise<void>=> {
+export const getTicketById = async (req: Request, res: Response): Promise<void> => {
     const ticketId = req.params.id;
     try {
         const ticket = await ticketService.getTicketById(ticketId);
         res.status(200).json(ticket);
-        return ;
+        return;
     } catch (error: any) {
         if (error.message === 'TICKET_NOT_FOUND') {
             res.status(404).json({ message: 'Ticket not found' });
-            return ;
+            return;
         }
         console.error('Error fetching ticket by ID:', error);
         res.status(500).json({ message: 'Internal server error' });
-        return ;
+        return;
     }
 };
 
 
-export const updateTicket = async (req: Request, res: Response) : Promise<void>=> {
+export const updateTicket = async (req: Request, res: Response): Promise<void> => {
     const ticketId = req.params.id;
     const updateData = req.body;
     try {
         const updatedTicket = await ticketService.updateTicket(ticketId, updateData);
         res.status(200).json(updatedTicket);
-        return ;
+        return;
     } catch (error: any) {
         if (error.message === 'TICKET_UPDATE_FAILED') {
             res.status(404).json({ message: 'Ticket update failed' });
-            return ;
+            return;
         }
         console.error('Error updating ticket:', error);
         res.status(500).json({ message: 'Internal server error' });
-        return ;
+        return;
     }
 };
 
-export const deleteTicket = async (req: Request, res: Response) : Promise<void>=> {
+export const updateTicketStatus = async (req: Request, res: Response): Promise<void> => {
+    const ticketId = req.params.id;
+    const { status } = req.body;
+
+    if (!status) {
+        res.status(400).json({ message: 'Status is required' });
+        return;
+    }
+
+    try {
+        const updatedTicket = await ticketService.updateTicketStatus(ticketId, status);
+        res.status(200).json(updatedTicket);
+        return;
+    } catch (error: any) {
+        if (error.message === 'TICKET_NOT_FOUND') {
+            res.status(404).json({ message: 'Ticket not found' });
+            return;
+        }
+        if (error.message === 'INVALID_STATUS') {
+            res.status(400).json({ message: 'Invalid status value' });
+            return;
+        }
+        console.error('Error updating ticket status:', error);
+        res.status(500).json({ message: 'Internal server error' });
+        return;
+    }
+}
+
+export const deleteTicket = async (req: Request, res: Response): Promise<void> => {
     const ticketId = req.params.id;
     try {
         const deletedTicket = await ticketService.deleteTicket(ticketId);
         res.status(200).json(deletedTicket);
-        return ;
+        return;
     } catch (error: any) {
         if (error.message === 'TICKET_DELETION_FAILED') {
             res.status(404).json({ message: 'Ticket deletion failed' });
-            return ;
+            return;
         }
         console.error('Error deleting ticket:', error);
         res.status(500).json({ message: 'Internal server error' });
-        return ;
+        return;
     }
 };
