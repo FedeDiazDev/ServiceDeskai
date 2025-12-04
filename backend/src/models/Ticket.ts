@@ -1,6 +1,6 @@
 import {Schema, model, Types, Document } from "mongoose";
 
-interface ITicket extends Document{
+export interface ITicket extends Document{
     title: string;
     description: string;
     status:'open' | 'assigned' | 'in_progrsess' | 'resolved' | 'closed';
