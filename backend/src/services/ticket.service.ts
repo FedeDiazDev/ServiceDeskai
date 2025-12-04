@@ -22,6 +22,14 @@ export class TicketService {
         }
         return newTicket;
     }
+
+    async getTickets(){
+        const tickets = await TicketModel.find();
+        if (!tickets) {
+            throw new Error('TICKETS_NOT_FOUND');
+        }
+        return tickets;
+    }
 }
 
 export const ticketService = new TicketService();

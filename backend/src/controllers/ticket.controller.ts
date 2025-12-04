@@ -27,7 +27,18 @@ export const createTicket = async (req: Request, res: Response) => {
     }
  };
 
-export const getTickets = async (req: Request, res: Response) => { };
+export const getTickets = async (req: Request, res: Response) => { 
+    try {
+        const tickets = await ticketService.getTickets();
+        return res.status(200).json(tickets);
+    } catch (error: any) {
+        if (!error.message) {
+            return res.status(404).json({ message: 'No tickets found' });
+        }
+        console.error('Error fetching tickets:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};
 
 export const getTicketById = async (req: Request, res: Response) => { };
 
