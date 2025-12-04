@@ -30,6 +30,22 @@ export class TicketService {
         }
         return tickets;
     }
+
+    async getTicketById(ticketId : string){
+        const ticket = await TicketModel.findById(ticketId);
+        if (!ticket){
+            throw new Error('TICKET_NOT_FOUND');
+        }
+        return ticket;
+    }
+
+    async updateTicket(ticketId: string, updateData: Partial<ITicket>){
+        const updatedTicket = await TicketModel.findByIdAndUpdate(ticketId, updateData, { new: true });
+        if (!updatedTicket){
+            throw new Error('TICKET_UPDATE_FAILED');
+        }
+        return updatedTicket;
+    }
 }
 
 export const ticketService = new TicketService();
