@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Mail, Lock } from "lucide-react";
-import Button from "../components/Button";
-import Input from "../components/Input";
+import Button from "../components/common/Button";
+import Input from "../components/common/Input";
 
 export const Login = () => {
     const [email, setEmail] = useState('');
@@ -20,7 +20,7 @@ export const Login = () => {
 
         try {
             await login(email, password);
-            navigate('/dashboard');
+            navigate('/tickets');
         } catch (err: any) {
             setError(err.response?.data?.message || 'Error al iniciar sesión');
         } finally {
@@ -28,7 +28,7 @@ export const Login = () => {
         }
     };
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-dark-bg">
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-dark-bg px-4">
             <div className="bg-white dark:bg-dark-surface p-8 rounded-xl shadow-md w-full max-w-md">
                 <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-dark-text-main">Iniciar Sesión</h2>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">

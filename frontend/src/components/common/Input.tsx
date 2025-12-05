@@ -31,7 +31,7 @@ export default function Input({ type, value, onChange, label, placeholder, error
                     onChange={onChange}
                     placeholder={placeholder}
                     required={required}
-                    className={`w-full bg-gray-100 dark:bg-dark-surface rounded-xl p-4 ${Icon ? 'pl-12' : ''} focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-dark-text-main font-medium ${error ? 'border-2 border-status-high-border' : ''}`}
+                    className={`w-full bg-gray-100 dark:bg-dark-surface border border-transparent dark:border-dark-border rounded-xl p-4 ${Icon ? 'pl-12' : ''} focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-dark-text-main font-medium ${error ? 'border-2 border-status-high-border' : ''}`}
                 />
             </div>
             {error && (

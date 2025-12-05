@@ -1,6 +1,8 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { PrivateRoute, RoleRoute, PublicOnlyRoute } from './ProtectedRoutes';
 import { Login } from '../pages/Login';
+import Layout from '../components/layout/Layout';
+import Tickets from '../pages/Tickets';
 
 export const router = createBrowserRouter([
   {
@@ -13,16 +15,25 @@ export const router = createBrowserRouter([
   {
     element: <PrivateRoute />,
     children: [
-      { path: '/dashboard', element: <div>Dashboard</div> },
-      
       {
-        element: <RoleRoute allowedRoles={['admin']} />,
+        element: <Layout />,
         children: [
-          { path: '/users', element: <div>Users</div> },
+          { path: '/tickets', element: <Tickets /> },
+          { path: '/tickets/new', element: <div>Nuevo Ticket</div> },
+          
+          {
+            element: <RoleRoute allowedRoles={['admin']} />,
+            children: [
+              { path: '/users', element: <div>Users</div> },
+              { path: '/offices', element: <div>Offices</div> },
+            ],
+          },
+          
+          { path: '/settings', element: <div>Settings</div> },
         ],
       },
     ],
   },
 
-  { path: '/', element: <Navigate to="/login" /> },
+  { path: '/', element: <Navigate to="/tickets" /> },
 ]);
