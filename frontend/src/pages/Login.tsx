@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { Mail, Lock } from "lucide-react";
 import Button from "../components/Button";
 import Input from "../components/Input";
 
@@ -37,6 +38,7 @@ export const Login = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Correo Electrónico"
+                        icon={Mail}
                     />
                     <Input
                         type="password"
@@ -44,6 +46,7 @@ export const Login = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Contraseña"
+                        icon={Lock}
                     />
                     {error && <p className="text-status-high-text text-sm">{error}</p>}
                     <Button type="submit" isLoading={isLoading}>
