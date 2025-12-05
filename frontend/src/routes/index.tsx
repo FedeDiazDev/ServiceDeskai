@@ -1,11 +1,12 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { PrivateRoute, RoleRoute, PublicOnlyRoute } from './ProtectedRoutes';
+import { Login } from '../pages/Login';
 
 export const router = createBrowserRouter([
   {
     element: <PublicOnlyRoute />,
     children: [
-      { path: '/login', element: <div>Login Page</div> },
+      { path: '/login', element: <Login /> },
     ],
   },
 

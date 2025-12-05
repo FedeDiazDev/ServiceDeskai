@@ -1,4 +1,4 @@
-import { UserModel, IUser } from "../models/User";
+import { UserModel, IUser, UserResponse, toUserResponse } from "../models/User";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { RegisterInput, LoginInput } from '../schemas/auth.schema';
@@ -10,7 +10,7 @@ export class AuthService {
         return jwt.sign({ id: userId, role }, secret, { expiresIn: '7d' });
     }
 
-    async registerUser(userData: RegisterInput) {
+    async registerUser(userData: RegisterInput): Promise<UserResponse> {
         const { name, surname, email, password, role } = userData;
 
         const existingUser = await UserModel.findOne({ email });
@@ -27,18 +27,10 @@ export class AuthService {
             password: hashedPassword,
             role
         });
-        const returnedUser = {
-            id : newUser._id,
-            name: newUser.name,
-            surname: newUser.surname,
-            email: newUser.email,
-            role: newUser.role
-        };
-
-        return returnedUser;
+        return toUserResponse(newUser);
     }
 
-    async loginUser(userData: LoginInput): Promise<string> {
+    async loginUser(userData: LoginInput): Promise<{ token: string; user: UserResponse }> {
         const { email, password } = userData;
 
         const existingUser = await UserModel.findOne({ email });
@@ -52,7 +44,15 @@ export class AuthService {
         }
 
         const token = this.generateToken(existingUser._id.toString(), existingUser.role);
-        return token;
+        return { token, user: toUserResponse(existingUser) };
+    }
+
+    async me(userId: string): Promise<UserResponse> {
+        const user = await UserModel.findById(userId);
+        if (!user) {
+            throw new Error('USER_NOT_FOUND');
+        }
+        return toUserResponse(user);
     }
 }
 

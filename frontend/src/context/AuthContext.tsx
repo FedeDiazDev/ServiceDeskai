@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import axiosInstance from '../api/client';
 
@@ -28,7 +27,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true); // Cambiar a false temporalmente
 
     useEffect(() => {
         const checkAuth = async () => {

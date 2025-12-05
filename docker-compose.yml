@@ -14,6 +14,7 @@ services:
       - deskai-network
     environment:
       - NODE_ENV=${NODE_ENV}
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL}
       
   backend:
     build:
@@ -31,6 +32,7 @@ services:
       - BACKEND_PORT=${BACKEND_PORT}
       - MONGODB_URI=${MONGODB_URI}
       - JWT_SECRET=${JWT_SECRET}
+      - FRONTEND_URL=${FRONTEND_URL}
     depends_on:
       - mongodb
 

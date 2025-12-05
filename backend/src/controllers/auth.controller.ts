@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { authService } from '../services/auth.service';
 import { RegisterInput, LoginInput } from '../schemas/auth.schema';
+import jwt from 'jsonwebtoken';
 
 export const registerUser = async (req: Request<{}, {}, RegisterInput>, res: Response): Promise<void> => {
     const { name, surname, email, password, role } = req.body;
-
     try {
         const newUser = await authService.registerUser({ name, surname, email, password, role });
         res.status(201).json({
@@ -29,8 +29,14 @@ export const loginUser = async (req: Request<{}, {}, LoginInput>, res: Response)
     const { email, password } = req.body;
 
     try {
-        const userToken = await authService.loginUser({ email, password });
-        res.status(200).json({ success: true, message: 'Login successful', data: { userToken } });
+        const { token, user } = await authService.loginUser({ email, password });
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+        res.status(200).json({ success: true, user });
     } catch (error: any) {
         if (error.message === 'INVALID_CREDENTIALS' || error.message === 'USER_NOT_FOUND') {
             res.status(401).json({ message: 'Invalid email or password' });
@@ -40,3 +46,29 @@ export const loginUser = async (req: Request<{}, {}, LoginInput>, res: Response)
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+export const me = async (req: Request, res: Response): Promise<void> => {
+    const token = req.cookies.token;
+
+    if (!token) {
+        res.status(401).json({ message: 'No token provided' });
+        return;
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string; role: string };
+        const user = await authService.me(decoded.id);
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+        res.json({ user });
+    } catch {
+        res.status(401).json({ message: 'Invalid token' });
+    }
+};
+
+export const logout = async (req: Request, res: Response): Promise<void> => {
+    res.clearCookie('token');
+    res.send('Logged out successfully');
+}

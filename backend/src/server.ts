@@ -1,16 +1,22 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
+
 import { connectDB } from './config/db';
 import apiRouter from './routes/index';
 
 dotenv.config();
 
 const app: Express = express();
-const PORT = process.env.BACKEND_PORT ;
+const PORT = process.env.BACKEND_PORT;
 
-app.use(cors());
+app.use(cors({
+  credentials: true,
+  origin: process.env.FRONTEND_URL,
+} ));
 app.use(express.json());
+app.use(cookieParser());
 
 
 app.get('/api/test', (req: Request, res: Response) => {
