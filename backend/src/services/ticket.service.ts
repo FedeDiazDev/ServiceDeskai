@@ -68,6 +68,18 @@ export class TicketService {
         }
         return deletedTicket;
     }
+
+    async assignTicket(ticketId: string, assignedTo: string): Promise<ITicket> {
+        const ticket = await TicketModel.findByIdAndUpdate(
+            ticketId,
+            { assignedTo, status: 'assigned' },
+            { new: true }
+        );
+        if (!ticket) {
+            throw new Error('TICKET_NOT_FOUND');
+        }
+        return ticket;
+    }
 }
 
 export const ticketService = new TicketService();

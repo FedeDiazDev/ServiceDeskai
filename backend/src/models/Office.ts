@@ -1,6 +1,6 @@
 import { Schema, model, Document, Types } from 'mongoose';
 
-interface Ioffice extends Document{
+export interface Ioffice extends Document{
     name: string;
     location: string;
     phone: string;

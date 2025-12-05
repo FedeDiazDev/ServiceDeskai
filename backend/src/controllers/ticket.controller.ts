@@ -119,3 +119,21 @@ export const deleteTicket = async (req: Request, res: Response): Promise<void> =
         return;
     }
 };
+
+export const assignTicket = async (req: Request, res: Response): Promise<void> => {
+    const ticketId = req.params.id as string;
+    const { assignedTo } = req.body as { assignedTo: string };
+    try {
+        const ticket = await ticketService.assignTicket(ticketId, assignedTo);
+        res.status(200).json(ticket);
+        return;
+    } catch (error: any) {
+        if (error.message === 'TICKET_NOT_FOUND') {
+            res.status(404).json({ message: 'Ticket not found' });
+            return;
+        }
+        console.error('Error assigning ticket:', error);
+        res.status(500).json({ message: 'Internal server error' });
+        return;
+    }
+};

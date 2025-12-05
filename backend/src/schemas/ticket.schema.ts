@@ -22,6 +22,10 @@ export const updateStatusSchema = z.object({
   status: z.enum(['open', 'assigned', 'in_progress', 'resolved', 'closed']),
 });
 
+export const assignTicketSchema = z.object({
+  assignedTo: objectIdSchema,
+});
+
 export const listTicketsQuery = z.object({
   page: z.coerce.number().int().positive().optional().default(1),
   limit: z.coerce.number().int().positive().max(100).optional().default(20),
@@ -32,4 +36,5 @@ export const listTicketsQuery = z.object({
 export type CreateTicketInput = z.infer<typeof createTicketSchema>;
 export type UpdateTicketInput = z.infer<typeof updateTicketSchema>;
 export type UpdateStatusInput = z.infer<typeof updateStatusSchema>;
+export type AssignTicketInput = z.infer<typeof assignTicketSchema>;
 export type ListTicketsQuery = z.infer<typeof listTicketsQuery>;

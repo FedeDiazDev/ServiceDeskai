@@ -60,3 +60,5 @@ export const requireOwnershipOrAdmin = (paramName: string = 'id') => {
         next();
     };
 };
+
+export const requireStaff = requireRole(['admin', 'service']);

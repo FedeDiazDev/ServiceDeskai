@@ -10,7 +10,7 @@ router.use(authenticateToken);
 router.get('/', requireRole(['admin']), getAllUsers);
 
 router.get('/:id', validateParams(idParamSchema), requireOwnershipOrAdmin('id'), getUserById);
-router.put('/:id', validateParams(idParamSchema), requireOwnershipOrAdmin('id'), updateUser);
+router.put('/:id', validateParams(idParamSchema), requireOwnershipOrAdmin('admin'), updateUser);
 router.patch('/:id/role', validateParams(idParamSchema), requireRole(['admin']), changeUserRole);
 router.patch('/:id/password', validateParams(idParamSchema), requireOwnershipOrAdmin('id'), resetUserPassword);
 router.delete('/:id', validateParams(idParamSchema), requireRole(['admin']), deleteUser);
