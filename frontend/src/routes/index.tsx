@@ -3,6 +3,7 @@ import { PrivateRoute, RoleRoute, PublicOnlyRoute } from './ProtectedRoutes';
 import { Login } from '../pages/Login';
 import Layout from '../components/layout/Layout';
 import Tickets from '../pages/Tickets';
+import NewTicket from '../pages/NewTicket';
 
 export const router = createBrowserRouter([
   {
@@ -19,7 +20,7 @@ export const router = createBrowserRouter([
         element: <Layout />,
         children: [
           { path: '/tickets', element: <Tickets /> },
-          { path: '/tickets/new', element: <div>Nuevo Ticket</div> },
+          { path: '/tickets/new', element: <NewTicket /> },
           
           {
             element: <RoleRoute allowedRoles={['admin']} />,
