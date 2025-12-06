@@ -29,7 +29,8 @@ export const validateQuery = (schema: ZodSchema<any>) => {
     if (!result.success) {
       return res.status(400).json({ errors: result.error.format() });
     }
-    req.query = result.data as any;
+    // En Express 5, req.query es solo lectura. Guardamos los datos validados en req.validatedQuery
+    (req as any).validatedQuery = result.data;
     return next();
   };
 };

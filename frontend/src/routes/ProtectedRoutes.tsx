@@ -23,5 +23,5 @@ export const PublicOnlyRoute = () => {
     if (isLoading) {
         return <div>Loading...</div>;
     }
-    return user ? <Navigate to="/dashboard" replace /> : <Outlet />;
+    return user ? <Navigate to="/tickets" replace /> : <Outlet />;
 }
