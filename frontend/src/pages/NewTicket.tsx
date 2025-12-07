@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ticketService } from "../services/ticketService";
 import { aiService, GeneratedTicketData, ImageRejectedError } from "../services/aiService";
+import { Geolocation } from "../types/ticket";
 import Button from "../components/common/Button";
 import ImageDropzone from "../components/tickets/ImageDropzone";
 import ImagePreview from "../components/tickets/ImagePreview";
@@ -15,10 +16,29 @@ export default function NewTicket() {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     
     const [ticketData, setTicketData] = useState<GeneratedTicketData | null>(null);
+    const [geolocation, setGeolocation] = useState<Geolocation | null>(null);
     
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isRejection, setIsRejection] = useState(false);
+
+    // Get geolocation on mount
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setGeolocation({
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: position.coords.accuracy,
+                    });
+                },
+                (error) => {
+                    console.warn('Geolocation error:', error.message);
+                }
+            );
+        }
+    }, []);
 
     const handleImageSelect = (file: File) => {
         setImageFile(file);
@@ -59,14 +79,30 @@ export default function NewTicket() {
         setIsRejection(false);
     };
 
+    // Convert image to base64 for storage
+    const imageToBase64 = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = (error) => reject(error);
+        });
+    };
+
     const handleSubmit = async () => {
-        if (!ticketData) return;
+        if (!ticketData || !imageFile) return;
         
         setError(null);
         setIsLoading(true);
 
         try {
-            await ticketService.create(ticketData);
+            const imageBase64 = await imageToBase64(imageFile);
+            
+            await ticketService.create({
+                ...ticketData,
+                attachments: [imageBase64],
+                geolocation: geolocation || undefined,
+            });
             navigate('/tickets');
         } catch (err: any) {
             setError(err.response?.data?.message || 'Error creating ticket');

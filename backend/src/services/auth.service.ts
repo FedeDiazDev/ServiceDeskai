@@ -11,7 +11,7 @@ export class AuthService {
     }
 
     async registerUser(userData: RegisterInput): Promise<UserResponse> {
-        const { name, surname, email, password, role } = userData;
+        const { name, surname, email, password, role, office } = userData;
 
         const existingUser = await UserModel.findOne({ email });
         if (existingUser) {
@@ -25,7 +25,8 @@ export class AuthService {
             surname,
             email,
             password: hashedPassword,
-            role
+            role,
+            office
         });
         return toUserResponse(newUser);
     }

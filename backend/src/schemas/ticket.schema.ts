@@ -1,20 +1,32 @@
 import { z } from 'zod';
 import { objectIdSchema } from './common.schema';
 
+const geolocationSchema = z.object({
+  latitude: z.number().min(-90).max(90),
+  longitude: z.number().min(-180).max(180),
+  accuracy: z.number().optional(),
+  address: z.string().optional(),
+});
+
 export const createTicketSchema = z.object({
   title: z.string().min(3, { message: 'Title is required and must be at least 3 characters' }),
   description: z.string().min(6, { message: 'Description must be at least 6 characters' }),
   priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
   tags: z.array(z.string()).optional(),
-  attachments: z.array(z.string().url()).optional(),
+  attachments: z.array(z.string()).optional(),
+  office: objectIdSchema.optional(),
+  workstation: z.string().optional(),
+  geolocation: geolocationSchema.optional(),
 });
 
 export const updateTicketSchema = z.object({
   title: z.string().min(3).optional(),
   description: z.string().min(6).optional(),
-  priority: z.enum(['low', 'medium', 'high']).optional(),
+  priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
   tags: z.array(z.string()).optional(),
-  attachments: z.array(z.string().url()).optional(),
+  attachments: z.array(z.string()).optional(),
+  office: objectIdSchema.optional(),
+  workstation: z.string().optional(),
 });
 
 export const updateStatusSchema = z.object({

@@ -1,12 +1,12 @@
-import { statusLabels, statusStyles, priorityLabels, priorityStyles } from '../../types/ticket';
-import { Building2, Calendar, User } from 'lucide-react';
+import { statusLabels, statusStyles, priorityLabels, priorityStyles, TicketStatus, TicketPriority } from '../../types/ticket';
+import { Building2, Calendar, User, MapPin } from 'lucide-react';
 
 interface TicketCardProps {
     _id: string;
     title: string;
     description: string;
-    status: 'open' | 'assigned' | 'closed';
-    priority: 'low' | 'medium' | 'high';
+    status: TicketStatus;
+    priority: TicketPriority;
     createdAt: string;
     createdBy: {
         name: string;
@@ -17,13 +17,19 @@ interface TicketCardProps {
         surname: string;
     };
     office?: {
-        id: string;
+        _id: string;
         name: string;
+    };
+    workstation?: string;
+    geolocation?: {
+        latitude: number;
+        longitude: number;
+        address?: string;
     };
     onClick?: () => void;
 }
 
-export default function TicketCard({ _id, title, description, status, priority, createdAt, createdBy, assignedTo, office, onClick }: TicketCardProps) {
+export default function TicketCard({ _id, title, description, status, priority, createdAt, createdBy, assignedTo, office, workstation, geolocation, onClick }: TicketCardProps) {
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
@@ -57,7 +63,13 @@ export default function TicketCard({ _id, title, description, status, priority, 
                 {office && (
                     <div className="flex items-center gap-1">
                         <Building2 className="w-3.5 h-3.5" />
-                        <span>{office.name}</span>
+                        <span>{office.name}{workstation ? ` - ${workstation}` : ''}</span>
+                    </div>
+                )}
+                {geolocation && (
+                    <div className="flex items-center gap-1">
+                        <MapPin className="w-3.5 h-3.5" />
+                        <span>{geolocation.address || 'Location available'}</span>
                     </div>
                 )}
                 <div className="flex items-center gap-1">

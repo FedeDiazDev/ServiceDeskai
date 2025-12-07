@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { objectIdSchema } from './common.schema';
 
 export const registerSchema = z.object({
   name: z.string().min(1, { message: 'Name is required' }),
@@ -6,6 +7,7 @@ export const registerSchema = z.object({
   email: z.string().email({ message: 'Invalid email' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
   role: z.enum(['admin', 'user', 'service']).optional(),
+  office: objectIdSchema.optional(),
 });
 
 export const loginSchema = z.object({

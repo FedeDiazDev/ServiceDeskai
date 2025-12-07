@@ -1,18 +1,24 @@
 import { Request, Response } from "express";
 import { ticketService } from "../services/ticket.service";
 import { CreateTicketInput, ListTicketsQuery, UpdateTicketInput, UpdateStatusInput } from '../schemas/ticket.schema';
+import { UserModel } from '../models/User';
 
 export const createTicket = async (req: Request, res: Response): Promise<void> => {
-    const { title, description, priority, tags, attachments } = req.body as CreateTicketInput;
+    const { title, description, priority, tags, attachments, workstation, geolocation } = req.body as CreateTicketInput;
     const user = req.user as { id: string };
     
     try {
+        const userData = await UserModel.findById(user.id).select('office');
+        
         const newTicket = await ticketService.createTicket({
             title,
             description,
             priority,
             tags,
             attachments,
+            office: userData?.office?.toString(),
+            workstation,
+            geolocation,
             createdBy: user.id
         });
         res.status(201).json(newTicket);
