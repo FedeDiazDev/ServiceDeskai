@@ -3,7 +3,9 @@ import { ticketService } from "../services/ticket.service";
 import { CreateTicketInput, ListTicketsQuery, UpdateTicketInput, UpdateStatusInput } from '../schemas/ticket.schema';
 
 export const createTicket = async (req: Request, res: Response): Promise<void> => {
-    const { title, description, priority, tags, attachments, createdBy } = req.body as CreateTicketInput;
+    const { title, description, priority, tags, attachments } = req.body as CreateTicketInput;
+    const user = req.user as { id: string };
+    
     try {
         const newTicket = await ticketService.createTicket({
             title,
@@ -11,7 +13,7 @@ export const createTicket = async (req: Request, res: Response): Promise<void> =
             priority,
             tags,
             attachments,
-            createdBy
+            createdBy: user.id
         });
         res.status(201).json(newTicket);
         return;

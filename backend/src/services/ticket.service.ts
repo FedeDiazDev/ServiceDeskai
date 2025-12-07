@@ -1,9 +1,13 @@
 import { TicketModel, ITicket } from "../models/Ticket";
 import { CreateTicketInput, UpdateTicketInput } from '../schemas/ticket.schema';
 
+interface CreateTicketData extends CreateTicketInput {
+    createdBy: string;
+}
+
 export class TicketService {
 
-    async createTicket(ticketData: CreateTicketInput): Promise<ITicket> {
+    async createTicket(ticketData: CreateTicketData): Promise<ITicket> {
         const { title, description, priority, tags, attachments, createdBy } = ticketData;
 
         const newTicket : ITicket | null = await TicketModel.create({

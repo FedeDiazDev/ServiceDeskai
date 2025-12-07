@@ -2,7 +2,7 @@ import { statusLabels, statusStyles, priorityLabels, priorityStyles } from '../.
 import { Building2, Calendar, User } from 'lucide-react';
 
 interface TicketCardProps {
-    id: string;
+    _id: string;
     title: string;
     description: string;
     status: 'open' | 'assigned' | 'closed';
@@ -23,10 +23,10 @@ interface TicketCardProps {
     onClick?: () => void;
 }
 
-export default function TicketCard({ id, title, description, status, priority, createdAt, createdBy, assignedTo, office, onClick }: TicketCardProps) {
+export default function TicketCard({ _id, title, description, status, priority, createdAt, createdBy, assignedTo, office, onClick }: TicketCardProps) {
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
-        return date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+        return date.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
     };
 
     return (
@@ -52,7 +52,7 @@ export default function TicketCard({ id, title, description, status, priority, c
                 </p>
             </div>
 
-            {/* Footer: Info adicional */}
+            {/* Footer */}
             <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 dark:text-dark-text-muted">
                 {office && (
                     <div className="flex items-center gap-1">
@@ -62,7 +62,12 @@ export default function TicketCard({ id, title, description, status, priority, c
                 )}
                 <div className="flex items-center gap-1">
                     <User className="w-3.5 h-3.5" />
-                    <span>{createdBy.name} {createdBy.surname}</span>
+                    <span>
+                        {assignedTo 
+                            ? `${assignedTo.name} ${assignedTo.surname}`
+                            : 'Unassigned'
+                        }
+                    </span>
                 </div>
                 <div className="flex items-center gap-1">
                     <Calendar className="w-3.5 h-3.5" />

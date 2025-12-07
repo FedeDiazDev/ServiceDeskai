@@ -55,9 +55,9 @@ export default function Tickets() {
                 <div className="flex flex-col gap-4">
                     {tickets.map((ticket) => (
                         <TicketCard
-                            key={ticket.id}
+                            key={ticket._id}
                             {...ticket}
-                            onClick={() => navigate(`/tickets/${ticket.id}`)}
+                            onClick={() => navigate(`/tickets/${ticket._id}`)}
                         />
                     ))}
                 </div>

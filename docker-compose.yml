@@ -32,6 +32,7 @@ services:
       - BACKEND_PORT=${BACKEND_PORT}
       - MONGODB_URI=${MONGODB_URI}
       - JWT_SECRET=${JWT_SECRET}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
       - FRONTEND_URL=${FRONTEND_URL}
     depends_on:
       - mongodb

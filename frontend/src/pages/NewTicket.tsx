@@ -1,60 +1,62 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 import { ticketService } from "../services/ticketService";
-import { TicketPriority } from "../types/ticket";
+import { aiService, GeneratedTicketData, ImageRejectedError } from "../services/aiService";
 import Button from "../components/common/Button";
 import ImageDropzone from "../components/tickets/ImageDropzone";
 import ImagePreview from "../components/tickets/ImagePreview";
 import TicketSummary from "../components/tickets/TicketSummary";
 
 export default function NewTicket() {
-    const { user } = useAuth();
     const navigate = useNavigate();
     
-    // Estados de imagen
+    const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     
-    // AI-generated data (read-only)
-    const [ticketData, setTicketData] = useState<{
-        title: string;
-        description: string;
-        priority: TicketPriority;
-    } | null>(null);
+    const [ticketData, setTicketData] = useState<GeneratedTicketData | null>(null);
     
-    // Estados del formulario
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [isRejection, setIsRejection] = useState(false);
 
     const handleImageSelect = (file: File) => {
+        setImageFile(file);
         setImagePreview(URL.createObjectURL(file));
         setTicketData(null);
+        setError(null);
+        setIsRejection(false);
         analyzeImage(file);
     };
 
     const analyzeImage = async (file: File) => {
         setIsAnalyzing(true);
         setError(null);
+        setIsRejection(false);
         
-        // TODO: Call backend to analyze with AI
-        // For now we simulate a delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-        // Simulated AI data
-        setTicketData({
-            title: 'Application Error',
-            description: 'The application shows an error message when trying to perform the operation. The user cannot continue with the process.',
-            priority: 'high',
-        });
-        
-        setIsAnalyzing(false);
+        try {
+            const data = await aiService.analyzeImage(file);
+            setTicketData(data);
+        } catch (err: any) {
+            if (err instanceof ImageRejectedError) {
+                setError(err.message);
+                setIsRejection(true);
+            } else {
+                setError(err.response?.data?.message || 'Error analyzing image');
+                setImagePreview(null);
+                setImageFile(null);
+            }
+        } finally {
+            setIsAnalyzing(false);
+        }
     };
 
     const removeImage = () => {
+        setImageFile(null);
         setImagePreview(null);
         setTicketData(null);
         setError(null);
+        setIsRejection(false);
     };
 
     const handleSubmit = async () => {
@@ -64,10 +66,7 @@ export default function NewTicket() {
         setIsLoading(true);
 
         try {
-            await ticketService.create({
-                ...ticketData,
-                createdBy: { name: user?.name || '', surname: user?.surname || '' },
-            });
+            await ticketService.create(ticketData);
             navigate('/tickets');
         } catch (err: any) {
             setError(err.response?.data?.message || 'Error creating ticket');
@@ -82,8 +81,17 @@ export default function NewTicket() {
                 New Ticket
             </h1>
 
-            {!imagePreview && (
+            {!imagePreview && !error && (
                 <ImageDropzone onImageSelect={handleImageSelect} />
+            )}
+
+            {error && !imagePreview && (
+                <div className="flex flex-col gap-4">
+                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
+                        <p className="text-red-700 dark:text-red-400">{error}</p>
+                    </div>
+                    <ImageDropzone onImageSelect={handleImageSelect} />
+                </div>
             )}
 
             {imagePreview && (
@@ -97,6 +105,26 @@ export default function NewTicket() {
                 </div>
             )}
 
+            {isRejection && imagePreview && (
+                <div className="flex flex-col gap-4">
+                    <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
+                        <p className="text-amber-700 dark:text-amber-400 font-medium mb-1">
+                            Invalid image
+                        </p>
+                        <p className="text-amber-600 dark:text-amber-500 text-sm">
+                            {error}
+                        </p>
+                    </div>
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={removeImage}
+                    >
+                        Upload a different image
+                    </Button>
+                </div>
+            )}
+
             {ticketData && (
                 <div className="flex flex-col gap-4">
                     <TicketSummary
@@ -105,7 +133,7 @@ export default function NewTicket() {
                         priority={ticketData.priority}
                     />
 
-                    {error && (
+                    {error && !isRejection && (
                         <p className="text-status-high-text text-sm">{error}</p>
                     )}
 

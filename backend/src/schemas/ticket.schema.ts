@@ -4,10 +4,9 @@ import { objectIdSchema } from './common.schema';
 export const createTicketSchema = z.object({
   title: z.string().min(3, { message: 'Title is required and must be at least 3 characters' }),
   description: z.string().min(6, { message: 'Description must be at least 6 characters' }),
-  priority: z.enum(['low', 'medium', 'high']).optional(),
+  priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
   tags: z.array(z.string()).optional(),
   attachments: z.array(z.string().url()).optional(),
-  createdBy: objectIdSchema,
 });
 
 export const updateTicketSchema = z.object({

@@ -16,7 +16,7 @@ export const ticketService = {
 
     // Crear un ticket
     create: async (ticketData: Partial<Ticket>): Promise<Ticket> => {
-        const response = await axiosInstance.post<Ticket>('/tickets', ticketData);
+        const response = await axiosInstance.post<Ticket>('/tickets/create', ticketData);
         return response.data;
     },
 
