@@ -39,7 +39,6 @@ export class GeolocationService {
 
     async getLocationByIp(ip: string): Promise<GeolocationResult | null> {
         try {
-            // Skip private/local IPs - return null to trigger fallback
             if (this.isPrivateIp(ip)) {
                 console.log(`Skipping private IP: ${ip}`);
                 return null;
@@ -93,19 +92,14 @@ export class GeolocationService {
     }
 
     private isPrivateIp(ip: string): boolean {
-        // Check for common private/local IPs
         if (ip === '127.0.0.1' || ip === '::1' || ip === 'localhost') {
             return true;
         }
 
-        // Check for private IPv4 ranges
         const parts = ip.split('.').map(Number);
         if (parts.length === 4) {
-            // 10.x.x.x
             if (parts[0] === 10) return true;
-            // 172.16.x.x - 172.31.x.x
             if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) return true;
-            // 192.168.x.x
             if (parts[0] === 192 && parts[1] === 168) return true;
         }
 

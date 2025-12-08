@@ -1,6 +1,6 @@
 import { LucideIcon } from "lucide-react";
 
-type InputTypes = "text" | "password" | "email" | "number";
+type InputTypes = "text" | "password" | "email" | "number" | "tel";
 
 interface InputProps {
     type: InputTypes;

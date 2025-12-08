@@ -57,7 +57,6 @@ export class TicketService {
         if (!newTicket) {
             throw new Error('TICKET_CREATION_FAILED');
         }
-        // devolver ticket poblado para frontend
         const populated = await TicketModel.findById(newTicket._id)
             .populate('createdBy', 'name surname')
             .populate('assignedTo', 'name surname')

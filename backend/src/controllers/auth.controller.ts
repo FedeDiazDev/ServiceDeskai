@@ -82,7 +82,6 @@ export const refresh = async (req: Request, res: Response): Promise<void> => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string; role: string };
-        // Re-sign a new token to extend expiration
         const newToken = jwt.sign({ id: decoded.id, role: decoded.role }, process.env.JWT_SECRET as string, { expiresIn: '7d' });
         res.cookie('token', newToken, {
             httpOnly: true,

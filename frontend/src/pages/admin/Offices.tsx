@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import OfficeCard from '../../components/admin/OfficeCard';
 import { useGetOfficesQuery, useCreateOfficeMutation } from '../../services/officesApi';
+import { Search } from 'lucide-react';
 
 const Offices = () => {
     const [search, setSearch] = useState('');
@@ -30,12 +31,15 @@ const Offices = () => {
         <div>
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-dark-text-main">Offices</h1>
-                <input
-                    className="px-3 py-1 border rounded text-sm"
-                    placeholder="Search office"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                />
+                <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-dark-text-muted" />
+                    <input
+                        className="pl-9 pr-3 py-2 border border-gray-300 dark:border-dark-border rounded-lg text-sm bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text-main focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors w-48"
+                        placeholder="Search office..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                </div>
             </div>
 
             {filtered.length === 0 ? (
