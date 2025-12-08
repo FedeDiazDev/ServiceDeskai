@@ -27,7 +27,6 @@ export default function NavItem({ item, variant }: NavItemProps) {
         );
     }
 
-    // variant === "sidebar"
     return (
         <NavLink
             to={item.to}

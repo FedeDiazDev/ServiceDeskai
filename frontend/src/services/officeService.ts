@@ -8,9 +8,5 @@ export interface Office {
     updatedAt: string;
 }
 
-export const officeService = {
-    getAll: async (): Promise<Office[]> => {
-        const response = await axiosInstance.get<Office[]>('/offices');
-        return response.data;
-    },
-};
+console.warn('[deprecated] frontend/src/services/officeService.ts moved to frontend/src/services/deprecated/officeService.ts — use RTK Query hooks instead');
+export * from './deprecated/officeService';

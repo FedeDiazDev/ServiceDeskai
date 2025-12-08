@@ -1,29 +1,13 @@
-import { useEffect, useState } from 'react';
-import { officeService, Office } from '../../services/officeService';
+import { useState } from 'react';
 import OfficeCard from '../../components/admin/OfficeCard';
+import { useGetOfficesQuery, useCreateOfficeMutation } from '../../services/officesApi';
 
 const Offices = () => {
-    const [offices, setOffices] = useState<Office[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [search, setSearch] = useState('');
+    const { data: offices, isLoading, isError } = useGetOfficesQuery();
+    const [createOffice] = useCreateOfficeMutation();
 
-    useEffect(() => {
-        const fetchOffices = async () => {
-            try {
-                const data = await officeService.getAll();
-                setOffices(data);
-            } catch (err) {
-                setError('Error al cargar las oficinas');
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchOffices();
-    }, []);
-
-    if (loading) {
+    if (isLoading) {
         return (
             <div className="flex items-center justify-center h-64">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
@@ -31,34 +15,54 @@ const Offices = () => {
         );
     }
 
-    if (error) {
+    if (isError) {
         return (
             <div className="text-center py-8">
-                <p className="text-status-high-text">{error}</p>
+                <p className="text-status-high-text">Error al cargar las oficinas</p>
             </div>
         );
     }
 
+    const filtered = offices?.filter((o) => o.name.toLowerCase().includes(search.toLowerCase())) ?? [];
+
     return (
         <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-dark-text-main mb-6">
-                Oficinas
-            </h1>
-            
-            {offices.length === 0 ? (
+            <div className="flex items-center justify-between mb-6">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-dark-text-main">Oficinas</h1>
+                <input
+                    className="px-3 py-1 border rounded text-sm"
+                    placeholder="Buscar oficina"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                />
+            </div>
+
+            {filtered.length === 0 ? (
                 <div className="text-center py-8">
                     <p className="text-gray-500 dark:text-dark-text-muted">No hay oficinas registradas</p>
                 </div>
             ) : (
                 <div className="flex flex-col gap-4">
-                    {offices.map((office) => (
-                        <OfficeCard
-                            key={office._id}
-                            {...office}
-                        />
+                    {filtered.map((office) => (
+                        <OfficeCard key={office._id} {...office} />
                     ))}
                 </div>
             )}
+            <div className="mt-6">
+                <button
+                    className="px-3 py-2 bg-primary-600 text-white rounded"
+                    onClick={async () => {
+                        const name = prompt('Nombre de la oficina');
+                        const address = prompt('Dirección (opcional)');
+                        if (!name) return alert('El nombre es requerido');
+                        try {
+                            await createOffice({ name, address: address || undefined }).unwrap();
+                        } catch (e: any) {
+                            alert(e?.data?.message || e?.message || 'Error al crear oficina');
+                        }
+                    }}
+                >Nueva oficina</button>
+            </div>
         </div>
     );
 };

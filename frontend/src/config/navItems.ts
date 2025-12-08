@@ -4,7 +4,7 @@ export interface NavItemConfig {
     to: string;
     icon: LucideIcon;
     label: string;
-    roles?: ('admin' | 'user' | 'service')[];  // Si no se especifica, visible para todos
+    roles?: ('admin' | 'user' | 'service')[];
     hideOnMobile?: boolean;
 }
 

@@ -1,52 +1,29 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import TicketDetailCard from '../components/tickets/TicketDetailCard';
-import { ticketService } from '../services/ticketService';
-import { Ticket, TicketStatus } from '../types/ticket';
+import { useGetTicketByIdQuery, useUpdateStatusMutation } from '../services/ticketsApi';
+import { TicketStatus } from '../types/ticket';
 import { useAuth } from '../context/AuthContext';
 
 export default function TicketDetail() {
     const { id } = useParams();
-    const navigate = useNavigate();
-    const { user, hasRole } = useAuth();
+    const { hasRole } = useAuth();
 
-    const [ticket, setTicket] = useState<Ticket | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [actionLoading, setActionLoading] = useState(false);
-
-    useEffect(() => {
-        if (!id) return;
-        const fetch = async () => {
-            try {
-                const data = await ticketService.getById(id);
-                setTicket(data);
-            } catch (err: any) {
-                setError(err.response?.data?.message || 'Error al cargar ticket');
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetch();
-    }, [id]);
+    const { data: ticket, isLoading, isError } = useGetTicketByIdQuery(id as string);
+    const [updateStatus, { isLoading: actionLoading }] = useUpdateStatusMutation();
 
     const canManage = hasRole(['service', 'admin']);
 
     const handleStatusChange = async (newStatus: TicketStatus) => {
         if (!ticket || !id) return;
-        setActionLoading(true);
         try {
-            const updated = await ticketService.patchStatus(id, newStatus);
-            setTicket(updated);
-        } catch (err: any) {
-            console.error(err);
-            setError(err.response?.data?.message || 'Error al actualizar estado');
-        } finally {
-            setActionLoading(false);
+            await updateStatus({ id: id as string, status: newStatus }).unwrap();
+        } catch (err) {
+            console.error('Failed to update status', err);
         }
     };
 
-    if (loading) {
+    if (isLoading) {
         return (
             <div className="flex items-center justify-center h-64">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
@@ -54,10 +31,10 @@ export default function TicketDetail() {
         );
     }
 
-    if (error) {
+    if (isError) {
         return (
             <div className="text-center py-8">
-                <p className="text-status-high-text">{error}</p>
+                <p className="text-status-high-text">Error al cargar ticket</p>
             </div>
         );
     }

@@ -18,7 +18,6 @@ export const generateTicket = async (req: Request, res: Response): Promise<void>
 
         const ticketData = await aiService.analyzeImage(image, mimeType);
 
-        // Check if AI rejected the image
         if (!ticketData.isValid) {
             res.status(400).json({
                 success: false,

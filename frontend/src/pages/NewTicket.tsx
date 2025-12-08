@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ticketService } from "../services/ticketService";
-import { aiService, GeneratedTicketData, ImageRejectedError } from "../services/aiService";
+import { useCreateTicketMutation } from '../services/ticketsApi';
+import { useAnalyzeImageMutation } from '../services/aiApi';
+import { GeneratedTicketData } from '../services/aiApi';
 import { Geolocation } from "../types/ticket";
 import Button from "../components/common/Button";
 import ImageDropzone from "../components/tickets/ImageDropzone";
@@ -22,7 +23,9 @@ export default function NewTicket() {
     const [error, setError] = useState<string | null>(null);
     const [isRejection, setIsRejection] = useState(false);
 
-    // Get geolocation on mount
+    const [createTicket, { isLoading: creating }] = useCreateTicketMutation();
+    const [analyzeImageMutation, { isLoading: analyzeLoading }] = useAnalyzeImageMutation();
+
     useEffect(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -53,16 +56,20 @@ export default function NewTicket() {
         setIsAnalyzing(true);
         setError(null);
         setIsRejection(false);
-        
+
         try {
-            const data = await aiService.analyzeImage(file);
-            setTicketData(data);
+            const imageDataUrl = await imageToBase64(file);
+            const base64 = imageDataUrl.split(',')[1];
+            const result = await analyzeImageMutation({ image: base64, mimeType: file.type }).unwrap();
+            setTicketData(result);
         } catch (err: any) {
-            if (err instanceof ImageRejectedError) {
-                setError(err.message);
+            const status = err?.status;
+            const data = err?.data;
+            if (status === 400 && data?.isValid === false) {
+                setError(data?.message || 'Image rejected by AI');
                 setIsRejection(true);
             } else {
-                setError(err.response?.data?.message || 'Error analyzing image');
+                setError(data?.message || err.message || 'Error analyzing image');
                 setImagePreview(null);
                 setImageFile(null);
             }
@@ -79,7 +86,6 @@ export default function NewTicket() {
         setIsRejection(false);
     };
 
-    // Convert image to base64 for storage
     const imageToBase64 = (file: File): Promise<string> => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -97,15 +103,15 @@ export default function NewTicket() {
 
         try {
             const imageBase64 = await imageToBase64(imageFile);
-            
-            await ticketService.create({
+
+            await createTicket({
                 ...ticketData,
                 attachments: [imageBase64],
                 geolocation: geolocation || undefined,
-            });
+            }).unwrap();
             navigate('/tickets');
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Error creating ticket');
+            setError(err.data?.message || err.message || 'Error creating ticket');
         } finally {
             setIsLoading(false);
         }

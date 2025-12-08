@@ -1,13 +1,8 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import axiosInstance from '../api/client';
+import { useGetMeQuery, useLoginMutation, useLogoutMutation } from '../services/authApi';
+import { User as ServiceUser } from '../services/userService';
 
-interface User {
-    id: string;
-    name: string;
-    surname: string;
-    email: string;
-    role: string;
-}
+type User = ServiceUser;
 
 interface AuthContextType {
     user: User | null;
@@ -27,29 +22,23 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
-    const [isLoading, setIsLoading] = useState(true); // Cambiar a false temporalmente
+    const { data, isFetching } = useGetMeQuery();
+    const [loginMutation] = useLoginMutation();
+    const [logoutMutation] = useLogoutMutation();
 
     useEffect(() => {
-        const checkAuth = async () => {
-            try {
-                const response = await axiosInstance.get('/auth/me');
-                setUser(response.data.user);
-            } catch {
-                setUser(null);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        checkAuth();
-    }, []);
+        setUser(data?.user ?? null);
+    }, [data]);
+
+    const isLoading = isFetching;
 
     const login = async (email: string, password: string) => {
-        const response = await axiosInstance.post('/auth/login', { email, password });
-        setUser(response.data.user);
+        const response = await loginMutation({ email, password }).unwrap();
+        setUser(response.user);
     };
 
     const logout = async () => {
-        await axiosInstance.post('/auth/logout');
+        await logoutMutation().unwrap();
         setUser(null);
     };
 

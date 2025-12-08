@@ -72,3 +72,26 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
     res.clearCookie('token');
     res.send('Logged out successfully');
 }
+
+export const refresh = async (req: Request, res: Response): Promise<void> => {
+    const token = req.cookies.token;
+    if (!token) {
+        res.status(401).json({ message: 'No token provided' });
+        return;
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string; role: string };
+        // Re-sign a new token to extend expiration
+        const newToken = jwt.sign({ id: decoded.id, role: decoded.role }, process.env.JWT_SECRET as string, { expiresIn: '7d' });
+        res.cookie('token', newToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+        res.status(200).json({ success: true });
+    } catch (err) {
+        res.status(401).json({ message: 'Invalid token' });
+    }
+};

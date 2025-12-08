@@ -27,7 +27,6 @@ export default function Header() {
         setDropdownOpen(false);
     };
 
-    // Obtener iniciales del usuario
     const getInitials = () => {
         if (!user) return '??';
         return `${user.name.charAt(0)}${user.surname.charAt(0)}`.toUpperCase();

@@ -65,9 +65,7 @@ export default function TicketDetailCard(props: Props) {
                     <div className="grid grid-cols-2 gap-2">
                         {attachments.map((att, idx) => (
                                 <div key={idx} className="border rounded overflow-hidden bg-gray-50">
-                                        {/* Asumimos base64 image strings; si no lo son, mostrar link */}
                                         {att.startsWith('data:image') ? (
-                                            // eslint-disable-next-line @next/next/no-img-element
                                             <img src={att} alt={`adjunto-${idx}`} className="w-full h-56 sm:h-64 object-cover rounded-md" />
                                         ) : (
                                             <a href={att} target="_blank" rel="noreferrer" className="block p-2 text-sm text-primary-600">Ver adjunto</a>
