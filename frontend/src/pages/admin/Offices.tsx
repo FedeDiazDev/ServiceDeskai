@@ -19,7 +19,7 @@ const Offices = () => {
     if (isError) {
         return (
             <div className="text-center py-8">
-                <p className="text-status-high-text">Error al cargar las oficinas</p>
+                <p className="text-status-high-text">Error loading offices</p>
             </div>
         );
     }
@@ -29,10 +29,10 @@ const Offices = () => {
     return (
         <div>
             <div className="flex items-center justify-between mb-6">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-dark-text-main">Oficinas</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-dark-text-main">Offices</h1>
                 <input
                     className="px-3 py-1 border rounded text-sm"
-                    placeholder="Buscar oficina"
+                    placeholder="Search office"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />
@@ -40,7 +40,7 @@ const Offices = () => {
 
             {filtered.length === 0 ? (
                 <div className="text-center py-8">
-                    <p className="text-gray-500 dark:text-dark-text-muted">No hay oficinas registradas</p>
+                    <p className="text-gray-500 dark:text-dark-text-muted">No offices registered</p>
                 </div>
             ) : (
                 <div className="flex flex-col gap-4">
@@ -53,7 +53,7 @@ const Offices = () => {
                 <button
                     className="px-3 py-2 bg-primary-600 text-white rounded"
                     onClick={() => navigate('/offices/new')}
-                >Nueva oficina</button>
+                >New office</button>
             </div>
         </div>
     );

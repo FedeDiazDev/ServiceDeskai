@@ -11,7 +11,7 @@ export default function TicketDetailCard(props: Props) {
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
-        return date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+        return date.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
     };
 
     return (
@@ -61,16 +61,16 @@ export default function TicketDetailCard(props: Props) {
 
             {attachments && attachments.length > 0 && (
                 <div className="mt-3">
-                    <h4 className="text-sm font-medium text-gray-800 dark:text-dark-text-main mb-2">Adjuntos</h4>
+                    <h4 className="text-sm font-medium text-gray-800 dark:text-dark-text-main mb-2">Attachments</h4>
                     <div className="grid grid-cols-2 gap-2">
                         {attachments.map((att, idx) => (
-                                <div key={idx} className="border rounded overflow-hidden bg-gray-50">
-                                        {att.startsWith('data:image') ? (
-                                            <img src={att} alt={`adjunto-${idx}`} className="w-full h-56 sm:h-64 object-cover rounded-md" />
-                                        ) : (
-                                            <a href={att} target="_blank" rel="noreferrer" className="block p-2 text-sm text-primary-600">Ver adjunto</a>
-                                        )}
-                                    </div>
+                            <div key={idx} className="border rounded overflow-hidden bg-gray-50">
+                                {att.startsWith('data:image') ? (
+                                    <img src={att} alt={`attachment-${idx}`} className="w-full h-56 sm:h-64 object-cover rounded-md" />
+                                ) : (
+                                    <a href={att} target="_blank" rel="noreferrer" className="block p-2 text-sm text-primary-600">View attachment</a>
+                                )}
+                            </div>
                         ))}
                     </div>
                 </div>

@@ -18,9 +18,9 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
     const status = errAny.status;
     const data = errAny.data as any;
     let friendly = data?.message || data?.error || (typeof data === 'string' ? data : JSON.stringify(data || '')) || 'Unknown error';
-    if (status === 500) friendly = 'Error interno del servidor';
-    if (status === 404) friendly = 'Recurso no encontrado';
-    if (status === 401 || status === 403) friendly = 'No autorizado — por favor inicie sesión';
+    if (status === 500) friendly = 'Internal server error';
+    if (status === 404) friendly = 'Resource not found';
+    if (status === 401 || status === 403) friendly = 'Unauthorized — please log in';
     result.error = { ...errAny, friendlyMessage: friendly } as any;
   }
 

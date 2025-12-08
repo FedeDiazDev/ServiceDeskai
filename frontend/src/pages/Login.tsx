@@ -22,7 +22,7 @@ export const Login = () => {
             await login(email, password);
             navigate('/tickets');
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Error al iniciar sesión');
+            setError(err.response?.data?.message || 'Error signing in');
         } finally {
             setIsLoading(false);
         }
@@ -30,27 +30,27 @@ export const Login = () => {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-dark-bg px-4">
             <div className="bg-white dark:bg-dark-surface p-8 rounded-xl shadow-md w-full max-w-md">
-                <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-dark-text-main">Iniciar Sesión</h2>
+                <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-dark-text-main">Sign In</h2>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <Input
                         type="email"
-                        label="Correo Electrónico"
+                        label="Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Correo Electrónico"
+                        placeholder="Email"
                         icon={Mail}
                     />
                     <Input
                         type="password"
-                        label="Contraseña"
+                        label="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Contraseña"
+                        placeholder="Password"
                         icon={Lock}
                     />
                     {error && <p className="text-status-high-text text-sm">{error}</p>}
                     <Button type="submit" isLoading={isLoading}>
-                        Iniciar Sesión
+                        Sign In
                     </Button>
                 </form>
             </div>

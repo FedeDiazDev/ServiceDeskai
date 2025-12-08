@@ -22,19 +22,19 @@ const roleColors: Record<UserRole, string> = {
 };
 
 const roleLabels: Record<UserRole, string> = {
-    admin: 'Administrador',
+    admin: 'Administrator',
     service: 'Service Desk',
-    user: 'Usuario',
+    user: 'User',
 };
 
 export default function UserCard({ name, email, role, office, createdAt, onClick }: UserCardProps) {
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
-        return date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+        return date.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
     };
 
     return (
-        <div 
+        <div
             className="flex flex-col gap-3 p-4 bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border rounded-xl transition-colors hover:bg-gray-50 dark:hover:bg-dark-border cursor-pointer w-full shadow-sm"
             onClick={onClick}
         >
@@ -61,7 +61,7 @@ export default function UserCard({ name, email, role, office, createdAt, onClick
             <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 dark:text-dark-text-muted">
                 <div className="flex items-center gap-1">
                     <Building2 className="w-3.5 h-3.5" />
-                    <span>{office?.name || 'Sin oficina'}</span>
+                    <span>{office?.name || 'No office'}</span>
                 </div>
                 <div className="flex items-center gap-1">
                     <Calendar className="w-3.5 h-3.5" />

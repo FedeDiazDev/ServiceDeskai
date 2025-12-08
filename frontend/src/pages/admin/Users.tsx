@@ -20,7 +20,7 @@ const Users = () => {
     if (isError) {
         return (
             <div className="text-center py-8">
-                <p className="text-status-high-text">Error al cargar los usuarios</p>
+                <p className="text-status-high-text">Error loading users</p>
             </div>
         );
     }
@@ -34,10 +34,10 @@ const Users = () => {
     return (
         <div>
             <div className="flex items-center justify-between mb-6">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-dark-text-main">Usuarios</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-dark-text-main">Users</h1>
                 <input
                     className="px-3 py-1 border rounded text-sm"
-                    placeholder="Buscar usuario"
+                    placeholder="Search user"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />
@@ -45,7 +45,7 @@ const Users = () => {
 
             {filtered.length === 0 ? (
                 <div className="text-center py-8">
-                    <p className="text-gray-500 dark:text-dark-text-muted">No hay usuarios registrados</p>
+                    <p className="text-gray-500 dark:text-dark-text-muted">No users registered</p>
                 </div>
             ) : (
                 <div className="flex flex-col gap-4">
@@ -58,7 +58,7 @@ const Users = () => {
                 <button
                     className="px-3 py-2 bg-primary-600 text-white rounded"
                     onClick={() => navigate('/users/new')}
-                >Nuevo usuario</button>
+                >New user</button>
             </div>
         </div>
     );

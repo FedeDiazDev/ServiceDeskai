@@ -75,20 +75,20 @@ export default function NewTicket() {
 
             if (result?.isValid && result.data) {
                 setTicketData(result.data);
-                toast.success('Imagen analizada correctamente');
+                toast.success('Image analyzed successfully');
             } else {
-                setError(result?.message || 'La imagen fue rechazada por la IA');
+                setError(result?.message || 'Image was rejected by AI');
                 setIsRejection(true);
             }
         } catch (err: any) {
             const status = err?.status;
             const data = err?.data;
             if (data?.isValid === false) {
-                setError(data?.message || 'La imagen fue rechazada por la IA');
+                setError(data?.message || 'Image was rejected by AI');
                 setIsRejection(true);
                 // La preview se mantiene para que el usuario vea la imagen rechazada
             } else {
-                setError(data?.message || err.message || 'Error analizando la imagen');
+                setError(data?.message || err.message || 'Error analyzing image');
                 setImagePreview(null);
                 setImageFile(null);
             }
@@ -126,10 +126,10 @@ export default function NewTicket() {
                 attachments: [imageBase64],
                 office: selectedOffice?._id,
             }).unwrap();
-            toast.success('Ticket creado correctamente');
+            toast.success('Ticket created successfully');
             navigate('/tickets');
         } catch (err: any) {
-            const msg = err.data?.message || err.message || 'Error creando ticket';
+            const msg = err.data?.message || err.message || 'Error creating ticket';
             setError(msg);
             toast.error(msg);
         } finally {

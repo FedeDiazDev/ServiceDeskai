@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import TicketDetailCard from '../components/tickets/TicketDetailCard';
 import { useGetTicketByIdQuery, useUpdateStatusMutation } from '../services/ticketsApi';
-import { Mail, Send } from 'lucide-react';
+import { Mail, Send, Play, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { useSendReportEmailMutation } from '../services/reportApi';
 import { TicketStatus } from '../types/ticket';
 import { useAuth } from '../context/AuthContext';
@@ -17,7 +17,7 @@ export default function TicketDetail() {
     const canManage = hasRole(['service', 'admin']);
     const [showEmailInput, setShowEmailInput] = useState(false);
     const [emailTo, setEmailTo] = useState("");
-const [sendReportEmail, { isLoading: sending, isSuccess, isError: isSendError, error }] = useSendReportEmailMutation();
+    const [sendReportEmail, { isLoading: sending, isSuccess, isError: isSendError, error }] = useSendReportEmailMutation();
     const handleSendEmail = async () => {
         if (!id || !emailTo) return;
         await sendReportEmail({ ticketId: id, to: emailTo });
@@ -43,7 +43,7 @@ const [sendReportEmail, { isLoading: sending, isSuccess, isError: isSendError, e
     if (isError) {
         return (
             <div className="text-center py-8">
-                <p className="text-status-high-text">Error al cargar ticket</p>
+                <p className="text-status-high-text">Error loading ticket</p>
             </div>
         );
     }
@@ -51,7 +51,7 @@ const [sendReportEmail, { isLoading: sending, isSuccess, isError: isSendError, e
     if (!ticket) {
         return (
             <div className="text-center py-8">
-                <p className="text-gray-500">Ticket no encontrado</p>
+                <p className="text-gray-500">Ticket not found</p>
             </div>
         );
     }
@@ -59,7 +59,7 @@ const [sendReportEmail, { isLoading: sending, isSuccess, isError: isSendError, e
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-dark-text-main">Detalle del ticket</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-dark-text-main">Ticket Details</h1>
             </div>
 
             <div className="flex flex-col gap-4">
@@ -74,7 +74,7 @@ const [sendReportEmail, { isLoading: sending, isSuccess, isError: isSendError, e
                         Share by email
                     </button>
                     {showEmailInput && (
-                        <div className="flex items-center gap-2 mt-2">
+                        <div className="flex items-center gap-2">
                             <input
                                 type="email"
                                 placeholder="Recipient email"
@@ -98,14 +98,19 @@ const [sendReportEmail, { isLoading: sending, isSuccess, isError: isSendError, e
                 </div>
 
                 {canManage && (
-                    <div className="flex items-center gap-2">
-                        {ticket.status !== 'in_progress' && (
+                    <div className="flex items-center gap-3 flex-wrap">
+                        {ticket.status !== 'in_progress' && ticket.status !== 'resolved' && ticket.status !== 'closed' && (
                             <button
                                 disabled={actionLoading}
                                 onClick={() => handleStatusChange('in_progress')}
-                                className="px-3 py-2 bg-blue-600 text-white rounded-md text-sm"
+                                className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg bg-blue-600 text-white shadow-md hover:bg-blue-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                             >
-                                Marcar en progreso
+                                {actionLoading ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    <Play className="h-4 w-4" />
+                                )}
+                                Start Progress
                             </button>
                         )}
 
@@ -113,9 +118,14 @@ const [sendReportEmail, { isLoading: sending, isSuccess, isError: isSendError, e
                             <button
                                 disabled={actionLoading}
                                 onClick={() => handleStatusChange('resolved')}
-                                className="px-3 py-2 bg-green-600 text-white rounded-md text-sm"
+                                className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg bg-emerald-600 text-white shadow-md hover:bg-emerald-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                             >
-                                Marcar resuelto
+                                {actionLoading ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    <CheckCircle className="h-4 w-4" />
+                                )}
+                                Mark Resolved
                             </button>
                         )}
 
@@ -123,13 +133,16 @@ const [sendReportEmail, { isLoading: sending, isSuccess, isError: isSendError, e
                             <button
                                 disabled={actionLoading}
                                 onClick={() => handleStatusChange('closed')}
-                                className="px-3 py-2 bg-rose-600 text-white rounded-md text-sm"
+                                className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg bg-rose-600 text-white shadow-md hover:bg-rose-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-rose-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                             >
-                                Cerrar ticket
+                                {actionLoading ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    <XCircle className="h-4 w-4" />
+                                )}
+                                Close Ticket
                             </button>
                         )}
-
-                        {actionLoading && <span className="text-sm text-gray-500">Procesando...</span>}
                     </div>
                 )}
             </div>

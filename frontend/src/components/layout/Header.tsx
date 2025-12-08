@@ -68,8 +68,8 @@ export default function Header() {
 
                         {dropdownOpen && (
                             <>
-                                <div 
-                                    className="fixed inset-0 z-10" 
+                                <div
+                                    className="fixed inset-0 z-10"
                                     onClick={() => setDropdownOpen(false)}
                                 />
                                 <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-dark-surface rounded-lg shadow-lg border border-gray-200 dark:border-dark-border z-20">
@@ -89,7 +89,7 @@ export default function Header() {
                                         className="w-full flex items-center gap-2 px-3 py-2 text-left text-red-600 hover:bg-gray-100 dark:hover:bg-dark-border transition-colors rounded-b-lg"
                                     >
                                         <LogOut className="w-4 h-4" />
-                                        Cerrar sesión
+                                        Log out
                                     </button>
                                 </div>
                             </>

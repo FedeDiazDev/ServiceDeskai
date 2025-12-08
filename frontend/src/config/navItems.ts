@@ -10,14 +10,14 @@ export interface NavItemConfig {
 
 export const navItems: NavItemConfig[] = [
     { to: "/tickets", icon: Ticket, label: "Tickets" },
-    { to: "/tickets/new", icon: PlusCircle, label: "Nuevo Ticket" },
-    { to: "/users", icon: Users, label: "Usuarios", roles: ["admin"], hideOnMobile: true },
-    { to: "/offices", icon: Building2, label: "Oficinas", roles: ["admin"], hideOnMobile: true },
-    { to: "/settings", icon: Settings, label: "Ajustes" },
+    { to: "/tickets/new", icon: PlusCircle, label: "New Ticket" },
+    { to: "/users", icon: Users, label: "Users", roles: ["admin"], hideOnMobile: true },
+    { to: "/offices", icon: Building2, label: "Offices", roles: ["admin"], hideOnMobile: true },
+    { to: "/settings", icon: Settings, label: "Settings" },
 ];
 
 export const filterNavItemsByRole = (
-    items: NavItemConfig[], 
+    items: NavItemConfig[],
     userRole: string | undefined,
     excludeHiddenOnMobile: boolean = false
 ): NavItemConfig[] => {

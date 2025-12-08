@@ -14,13 +14,13 @@ const PORT = process.env.BACKEND_PORT;
 app.use(cors({
   credentials: true,
   origin: process.env.FRONTEND_URL,
-} ));
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
 
 
 app.get('/api/test', (req: Request, res: Response) => {
-  res.json({ message: 'Ruta de prueba funcionando' });
+  res.json({ message: 'Test route working' });
 });
 
 app.get('/', (req: Request, res: Response) => {
@@ -29,7 +29,7 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error(err);
-  res.status(500).json({ error: 'Error interno del servidor' });
+  res.status(500).json({ error: 'Internal server error' });
 });
 
 app.use('/api', apiRouter);
@@ -37,7 +37,7 @@ app.use('/api', apiRouter);
 const startServer = async () => {
   await connectDB();
   app.listen(PORT, () => {
-    console.log(`Servidor corriendo en puerto ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
   });
 };
 

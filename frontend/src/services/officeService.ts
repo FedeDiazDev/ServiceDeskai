@@ -1,5 +1,3 @@
-import axiosInstance from '../api/client';
-
 export interface Office {
     _id: string;
     name: string;
