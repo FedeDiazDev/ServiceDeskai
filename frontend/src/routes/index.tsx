@@ -9,6 +9,7 @@ import Users from '../pages/admin/Users';
 import Offices from '../pages/admin/Offices';
 import CreateUser from '../pages/CreateUser';
 import CreateOffice from '../pages/CreateOffice';
+import Settings from '../pages/Settings';
 
 export const router = createBrowserRouter([
   {
@@ -27,7 +28,7 @@ export const router = createBrowserRouter([
           { path: '/tickets', element: <Tickets /> },
           { path: '/tickets/:id', element: <TicketDetail /> },
           { path: '/tickets/new', element: <NewTicket /> },
-          
+
           {
             element: <RoleRoute allowedRoles={['admin']} />,
             children: [
@@ -37,8 +38,8 @@ export const router = createBrowserRouter([
               { path: '/offices/new', element: <CreateOffice /> },
             ],
           },
-          
-          { path: '/settings', element: <div>Settings</div> },
+
+          { path: '/settings', element: <Settings /> },
         ],
       },
     ],

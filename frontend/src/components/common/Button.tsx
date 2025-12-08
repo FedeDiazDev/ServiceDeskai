@@ -7,11 +7,12 @@ interface ButtonProps {
     disabled?: boolean;
     variant?: ButtonVariant;
     isLoading?: boolean;
+    className?: string;
 }
 
-export default function Button({ children, type, onClick, disabled = false, variant = 'primary', isLoading = false }: ButtonProps) {
+export default function Button({ children, type, onClick, disabled = false, variant = 'primary', isLoading = false, className = '' }: ButtonProps) {
     const baseStyles = 'rounded-xl p-4 font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed';
-    
+
     const variantStyles = {
         primary: 'bg-primary-600 hover:bg-primary-700 text-white',
         secondary: 'bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-900 dark:text-dark-text-main border border-gray-300 dark:border-dark-border',
@@ -23,7 +24,7 @@ export default function Button({ children, type, onClick, disabled = false, vari
             type={type}
             onClick={onClick}
             disabled={disabled || isLoading}
-            className={`${baseStyles} ${variantStyles[variant]}`}
+            className={`${baseStyles} ${variantStyles[variant]} ${className}`}
         >
             {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
