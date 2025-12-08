@@ -16,7 +16,7 @@ export const connectDB = async () => {
   try {
     await mongoose.connect(MONGO_URI);
     console.log('MongoDB connected successfully');
-        
+
     await seedDatabase();
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
@@ -27,7 +27,7 @@ export const connectDB = async () => {
 const seedDatabase = async () => {
   try {
     const existingUsers = await UserModel.countDocuments();
-    
+
     if (existingUsers > 0) {
       console.log('Database already seeded');
       return;
@@ -37,21 +37,37 @@ const seedDatabase = async () => {
     const offices = await OfficeModel.insertMany([
       {
         name: 'Oficina Central',
+        city: 'Madrid',
         location: 'Calle Principal 123, Piso 1',
         phone: '+34 911 234 567'
       },
       {
+        name: 'Oficina Madrid Norte',
+        city: 'Madrid',
+        location: 'Paseo de la Castellana 200',
+        phone: '+34 911 234 571'
+      },
+      {
+        name: 'Oficina Madrid Sur',
+        city: 'Madrid',
+        location: 'Calle de Atocha 50',
+        phone: '+34 911 234 572'
+      },
+      {
         name: 'Oficina Norte',
+        city: 'Barcelona',
         location: 'Avenida del Norte 456, Piso 2',
         phone: '+34 911 234 568'
       },
       {
         name: 'Oficina Sur',
+        city: 'Sevilla',
         location: 'Plaza del Sur 789, Piso 3',
         phone: '+34 911 234 569'
       },
       {
         name: 'Oficina Este',
+        city: 'Valencia',
         location: 'Paseo del Este 321, Piso 1',
         phone: '+34 911 234 570'
       }

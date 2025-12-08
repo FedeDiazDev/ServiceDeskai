@@ -6,6 +6,7 @@ import Input from '../components/common/Input';
 
 export default function CreateOffice() {
     const [name, setName] = useState("");
+    const [city, setCity] = useState("");
     const [location, setLocation] = useState("");
     const [phone, setPhone] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -15,9 +16,9 @@ export default function CreateOffice() {
         e.preventDefault();
         setIsLoading(true);
         try {
-            await createOffice({ name, location, phone }).unwrap();
+            await createOffice({ name, city, location, phone }).unwrap();
             toast.success('Office created successfully');
-            setName(""); setLocation(""); setPhone("");
+            setName(""); setCity(""); setLocation(""); setPhone("");
         } catch (err: any) {
             toast.error(err?.data?.message || err?.message || 'Error creating office');
         } finally {
@@ -39,8 +40,16 @@ export default function CreateOffice() {
                 />
                 <Input
                     type="text"
+                    label="City"
+                    placeholder="City name (for geolocation matching)"
+                    value={city}
+                    onChange={e => setCity(e.target.value)}
+                    required
+                />
+                <Input
+                    type="text"
                     label="Location"
-                    placeholder="Location"
+                    placeholder="Full address"
                     value={location}
                     onChange={e => setLocation(e.target.value)}
                     required

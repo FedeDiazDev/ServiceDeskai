@@ -26,6 +26,14 @@ export class OfficeService {
         return office;
     }
 
+    async getOfficesByCity(city: string): Promise<Ioffice[]> {
+        // Case-insensitive search for offices in the specified city
+        const offices: Ioffice[] = await OfficeModel.find({
+            city: { $regex: new RegExp(`^${city}$`, 'i') }
+        });
+        return offices;
+    }
+
     async updateOffice(id: string, data: UpdateOfficeInput): Promise<Ioffice> {
         const office = await OfficeModel.findByIdAndUpdate(id, data, { new: true });
         if (!office) {

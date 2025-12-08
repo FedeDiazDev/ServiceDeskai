@@ -4,11 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { useCreateTicketMutation } from '../services/ticketsApi';
 import { useAnalyzeImageMutation } from '../services/aiApi';
 import { GeneratedTicketData } from '../services/aiApi';
-import { Geolocation } from "../types/ticket";
+import { useGetOfficesForCityQuery, getUserCity } from '../services/geolocationApi';
+import { Office } from '../services/officeService';
 import Button from "../components/common/Button";
 import ImageDropzone from "../components/tickets/ImageDropzone";
 import ImagePreview from "../components/tickets/ImagePreview";
 import TicketSummary from "../components/tickets/TicketSummary";
+import { MapPin, Building2, ChevronDown } from "lucide-react";
 
 export default function NewTicket() {
     const navigate = useNavigate();
@@ -18,7 +20,9 @@ export default function NewTicket() {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
 
     const [ticketData, setTicketData] = useState<GeneratedTicketData | null>(null);
-    const [geolocation, setGeolocation] = useState<Geolocation | null>(null);
+    const [selectedOffice, setSelectedOffice] = useState<Office | null>(null);
+    const [detectedCity, setDetectedCity] = useState<string | undefined>(undefined);
+    const [isDetectingCity, setIsDetectingCity] = useState(true);
 
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -27,22 +31,28 @@ export default function NewTicket() {
     const [createTicket, { isLoading: creating }] = useCreateTicketMutation();
     const [analyzeImageMutation, { isLoading: analyzeLoading }] = useAnalyzeImageMutation();
 
+    // Fetch offices based on detected city
+    const { data: locationData, isLoading: isLoadingOffices } = useGetOfficesForCityQuery(detectedCity, {
+        skip: isDetectingCity // Wait until city is detected
+    });
+
+    // Detect user's city from ip-api (frontend call)
     useEffect(() => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    setGeolocation({
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
-                        accuracy: position.coords.accuracy,
-                    });
-                },
-                (error) => {
-                    console.warn('Geolocation error:', error.message);
-                }
-            );
-        }
+        const detectCity = async () => {
+            setIsDetectingCity(true);
+            const city = await getUserCity();
+            setDetectedCity(city || undefined);
+            setIsDetectingCity(false);
+        };
+        detectCity();
     }, []);
+
+    // Auto-select office when only one is available
+    useEffect(() => {
+        if (locationData?.offices && locationData.offices.length === 1) {
+            setSelectedOffice(locationData.offices[0]);
+        }
+    }, [locationData]);
 
     const handleImageSelect = (file: File) => {
         setImageFile(file);
@@ -114,7 +124,7 @@ export default function NewTicket() {
             await createTicket({
                 ...ticketData,
                 attachments: [imageBase64],
-                geolocation: geolocation || undefined,
+                office: selectedOffice?._id,
             }).unwrap();
             toast.success('Ticket creado correctamente');
             navigate('/tickets');
@@ -127,11 +137,104 @@ export default function NewTicket() {
         }
     };
 
+    const isLoadingLocation = isDetectingCity || isLoadingOffices;
+
+    const renderOfficeSelector = () => {
+        if (isLoadingLocation) {
+            return (
+                <div className="bg-gray-50 dark:bg-dark-bg/50 rounded-xl p-4 flex items-center gap-3">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-600"></div>
+                    <span className="text-gray-600 dark:text-dark-text-muted">Detecting your location...</span>
+                </div>
+            );
+        }
+
+        if (!locationData?.offices || locationData.offices.length === 0) {
+            return (
+                <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 flex items-center gap-3">
+                    <MapPin className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                    <span className="text-amber-700 dark:text-amber-400">No offices available</span>
+                </div>
+            );
+        }
+
+        const offices = locationData.offices;
+        const matchedByCity = locationData.matchedByCity;
+        const cityName = detectedCity || locationData.city;
+
+        return (
+            <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border p-4">
+                <div className="flex items-center gap-2 mb-3">
+                    <Building2 className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                    <h3 className="font-medium text-gray-900 dark:text-dark-text-main">
+                        Office Assignment
+                    </h3>
+                </div>
+
+                {cityName && (
+                    <div className="flex items-center gap-2 mb-3 text-sm">
+                        <MapPin className="w-4 h-4 text-gray-400" />
+                        <span className="text-gray-600 dark:text-dark-text-muted">
+                            Detected location: <span className="font-medium text-gray-900 dark:text-dark-text-main">{cityName}</span>
+                        </span>
+                    </div>
+                )}
+
+                {offices.length === 1 ? (
+                    <div className="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                        <Building2 className="w-5 h-5 text-green-600 dark:text-green-400" />
+                        <div>
+                            <p className="font-medium text-green-800 dark:text-green-300">{offices[0].name}</p>
+                            <p className="text-sm text-green-600 dark:text-green-400">{offices[0].location}</p>
+                        </div>
+                        {matchedByCity && (
+                            <span className="ml-auto text-xs bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 px-2 py-1 rounded-full">
+                                Auto-assigned
+                            </span>
+                        )}
+                    </div>
+                ) : (
+                    <div className="space-y-2">
+                        <p className="text-sm text-gray-600 dark:text-dark-text-muted mb-2">
+                            {matchedByCity
+                                ? `${offices.length} offices found in your city. Please select one:`
+                                : `Select an office for your ticket:`
+                            }
+                        </p>
+                        <div className="relative">
+                            <select
+                                value={selectedOffice?._id || ''}
+                                onChange={(e) => {
+                                    const office = offices.find(o => o._id === e.target.value);
+                                    setSelectedOffice(office || null);
+                                }}
+                                className="w-full appearance-none bg-gray-100 dark:bg-dark-bg border border-gray-200 dark:border-dark-border rounded-lg p-3 pr-10 text-gray-900 dark:text-dark-text-main font-medium focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                            >
+                                <option value="">Select an office...</option>
+                                {offices.map((office) => (
+                                    <option key={office._id} value={office._id}>
+                                        {office.name} - {office.city}
+                                    </option>
+                                ))}
+                            </select>
+                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
     return (
         <div className="max-w-2xl mx-auto">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-dark-text-main mb-6">
                 New Ticket
             </h1>
+
+            {/* Office Selector - always visible */}
+            <div className="mb-6">
+                {renderOfficeSelector()}
+            </div>
 
             {!imagePreview && !error && (
                 <ImageDropzone onImageSelect={handleImageSelect} />
@@ -201,6 +304,7 @@ export default function NewTicket() {
                             type="button"
                             onClick={handleSubmit}
                             isLoading={isLoading}
+                            disabled={locationData?.offices && locationData.offices.length > 1 && !selectedOffice}
                         >
                             Confirm and create
                         </Button>
