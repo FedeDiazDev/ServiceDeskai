@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getUserById, getAllUsers, updateUser, changeUserRole, resetUserPassword, deleteUser } from "../controllers/user.controller";
+import { getUserById, getAllUsers, updateUser, changeUserRole, resetUserPassword, deleteUser, createUser } from "../controllers/user.controller";
 import { authenticateToken, requireRole, requireOwnershipOrAdmin } from "../middlewares/auth.middleware";
 import { validateParams } from "../middlewares/validate";
 import { idParamSchema } from "../schemas/common.schema";
@@ -7,6 +7,8 @@ import { idParamSchema } from "../schemas/common.schema";
 const router = Router();
 
 router.use(authenticateToken);
+
+router.post('/', requireRole(['admin']), createUser);
 router.get('/', requireRole(['admin']), getAllUsers);
 
 router.get('/:id', validateParams(idParamSchema), requireOwnershipOrAdmin('id'), getUserById);

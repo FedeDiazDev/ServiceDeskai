@@ -3,12 +3,12 @@ import { Building2, MapPin, Calendar } from 'lucide-react';
 interface OfficeCardProps {
     _id: string;
     name: string;
-    address?: string;
+    location: string;
     createdAt: string;
     onClick?: () => void;
 }
 
-export default function OfficeCard({ name, address, createdAt, onClick }: OfficeCardProps) {
+export default function OfficeCard({ name, location, createdAt, onClick }: OfficeCardProps) {
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
@@ -31,7 +31,7 @@ export default function OfficeCard({ name, address, createdAt, onClick }: Office
             <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 dark:text-dark-text-muted">
                 <div className="flex items-center gap-1">
                     <MapPin className="w-3.5 h-3.5" />
-                    <span>{address || 'Sin dirección'}</span>
+                    <span>{location || 'No location'}</span>
                 </div>
                 <div className="flex items-center gap-1">
                     <Calendar className="w-3.5 h-3.5" />

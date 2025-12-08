@@ -6,7 +6,8 @@ import Input from '../components/common/Input';
 
 export default function CreateOffice() {
     const [name, setName] = useState("");
-    const [address, setAddress] = useState("");
+    const [location, setLocation] = useState("");
+    const [phone, setPhone] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [createOffice] = useCreateOfficeMutation();
 
@@ -14,11 +15,11 @@ export default function CreateOffice() {
         e.preventDefault();
         setIsLoading(true);
         try {
-            await createOffice({ name, address }).unwrap();
-            toast.success('Oficina creada correctamente');
-            setName(""); setAddress("");
+            await createOffice({ name, location, phone }).unwrap();
+            toast.success('Office created successfully');
+            setName(""); setLocation(""); setPhone("");
         } catch (err: any) {
-            toast.error(err?.data?.message || err?.message || 'Error al crear oficina');
+            toast.error(err?.data?.message || err?.message || 'Error creating office');
         } finally {
             setIsLoading(false);
         }
@@ -26,24 +27,33 @@ export default function CreateOffice() {
 
     return (
         <div className="max-w-md mx-auto p-6 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border shadow">
-            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-dark-text-main">Crear oficina</h2>
+            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-dark-text-main">Create Office</h2>
             <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                 <Input
                     type="text"
-                    label="Nombre de la oficina"
-                    placeholder="Nombre de la oficina"
+                    label="Office Name"
+                    placeholder="Office Name"
                     value={name}
                     onChange={e => setName(e.target.value)}
                     required
                 />
                 <Input
                     type="text"
-                    label="Dirección (opcional)"
-                    placeholder="Dirección (opcional)"
-                    value={address}
-                    onChange={e => setAddress(e.target.value)}
+                    label="Location"
+                    placeholder="Location"
+                    value={location}
+                    onChange={e => setLocation(e.target.value)}
+                    required
                 />
-                <Button type="submit" isLoading={isLoading}>Crear oficina</Button>
+                <Input
+                    type="text"
+                    label="Phone"
+                    placeholder="Phone"
+                    value={phone}
+                    onChange={e => setPhone(e.target.value)}
+                    required
+                />
+                <Button type="submit" isLoading={isLoading}>Create Office</Button>
             </form>
         </div>
     );

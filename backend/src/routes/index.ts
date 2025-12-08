@@ -5,6 +5,7 @@ import userRoutes from './user.routes';
 import adminRoutes from './admin.routes';
 import officeRoutes from './office.routes';
 import aiRoutes from './ai.routes';
+import reportRoutes from './report.routes';
 
 const router = Router();
 
@@ -14,6 +15,7 @@ router.use('/users', userRoutes);
 router.use('/admin', adminRoutes);
 router.use('/offices', officeRoutes);
 router.use('/ai', aiRoutes);
+router.use('/reports', reportRoutes);
 
 export default router;
 

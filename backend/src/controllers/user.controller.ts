@@ -1,6 +1,28 @@
 import { Request, Response } from 'express';
 import { userService } from '../services/user.service';
 
+export const createUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { name, surname, email, password, role, office, avatarUrl } = req.body;
+        if (!name || !surname || !email || !password || !role) {
+            res.status(400).json({ message: 'Faltan campos obligatorios' });
+            return;
+        }
+        if (!['admin', 'user', 'service'].includes(role)) {
+            res.status(400).json({ message: 'Rol inválido' });
+            return;
+        }
+        const user = await userService.createUser({ name, surname, email, password, role, office, avatarUrl });
+        res.status(201).json(user);
+    } catch (error: any) {
+        if (error.code === 11000) {
+            res.status(400).json({ message: 'Email ya registrado' });
+            return;
+        }
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
 
 export const getUserById = async (req: Request, res: Response): Promise<void> => {
     const userId = req.params.id;

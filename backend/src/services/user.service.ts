@@ -3,6 +3,14 @@ import { UserModel, IUser } from "../models/User";
 
 
 export class UserService {
+    async createUser(data: Partial<IUser>): Promise<IUser> {
+        if (!data.password) {
+            data.password = Math.random().toString(36).slice(-8);
+        }
+        const user = await UserModel.create(data);
+        return user;
+    }
+    
     async getUserById(userId: string): Promise<IUser> {
         const user: IUser | null = await UserModel.findById(userId).populate('office');
         if (!user) {
@@ -25,8 +33,8 @@ export class UserService {
         }
         return updatedUser;
     }
-    async changeUserRole(userId: string, newRole: IUser['role']): Promise<IUser> { 
-        const updatedUser : IUser | null = await UserModel.findByIdAndUpdate(userId, { role: newRole },{ new: true });
+    async changeUserRole(userId: string, newRole: IUser['role']): Promise<IUser> {
+        const updatedUser: IUser | null = await UserModel.findByIdAndUpdate(userId, { role: newRole }, { new: true });
         if (!updatedUser) {
             throw new Error('USER_NOT_FOUND');
         }
@@ -34,12 +42,12 @@ export class UserService {
     }
 
     async deleteUser(userId: string): Promise<IUser> {
-        const deletedUser : IUser | null = await UserModel.findByIdAndDelete(userId);
-        if (!deletedUser){
+        const deletedUser: IUser | null = await UserModel.findByIdAndDelete(userId);
+        if (!deletedUser) {
             throw new Error('USER_DELETION_FAILED');
         }
         return deletedUser;
-     }
+    }
 }
 
 export const userService = new UserService();

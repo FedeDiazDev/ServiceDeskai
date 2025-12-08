@@ -3,7 +3,8 @@ import axiosInstance from '../api/client';
 export interface Office {
     _id: string;
     name: string;
-    address?: string;
+    location: string;
+    phone: string;
     createdAt: string;
     updatedAt: string;
 }
