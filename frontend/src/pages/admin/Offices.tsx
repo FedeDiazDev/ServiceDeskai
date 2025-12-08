@@ -1,11 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import OfficeCard from '../../components/admin/OfficeCard';
 import { useGetOfficesQuery, useCreateOfficeMutation } from '../../services/officesApi';
 
 const Offices = () => {
     const [search, setSearch] = useState('');
     const { data: offices, isLoading, isError } = useGetOfficesQuery();
-    const [createOffice] = useCreateOfficeMutation();
+    const navigate = useNavigate();
 
     if (isLoading) {
         return (
@@ -51,16 +52,7 @@ const Offices = () => {
             <div className="mt-6">
                 <button
                     className="px-3 py-2 bg-primary-600 text-white rounded"
-                    onClick={async () => {
-                        const name = prompt('Nombre de la oficina');
-                        const address = prompt('Dirección (opcional)');
-                        if (!name) return alert('El nombre es requerido');
-                        try {
-                            await createOffice({ name, address: address || undefined }).unwrap();
-                        } catch (e: any) {
-                            alert(e?.data?.message || e?.message || 'Error al crear oficina');
-                        }
-                    }}
+                    onClick={() => navigate('/offices/new')}
                 >Nueva oficina</button>
             </div>
         </div>

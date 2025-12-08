@@ -7,6 +7,8 @@ import NewTicket from '../pages/NewTicket';
 import TicketDetail from '../pages/TicketDetail';
 import Users from '../pages/admin/Users';
 import Offices from '../pages/admin/Offices';
+import CreateUser from '../pages/CreateUser';
+import CreateOffice from '../pages/CreateOffice';
 
 export const router = createBrowserRouter([
   {
@@ -30,7 +32,9 @@ export const router = createBrowserRouter([
             element: <RoleRoute allowedRoles={['admin']} />,
             children: [
               { path: '/users', element: <Users /> },
+              { path: '/users/new', element: <CreateUser /> },
               { path: '/offices', element: <Offices /> },
+              { path: '/offices/new', element: <CreateOffice /> },
             ],
           },
           

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import UserCard from '../../components/admin/UserCard';
 import { useGetUsersQuery, useCreateUserMutation } from '../../services/usersApi';
 
@@ -6,7 +7,7 @@ import { useGetUsersQuery, useCreateUserMutation } from '../../services/usersApi
 const Users = () => {
     const [search, setSearch] = useState('');
     const { data: users, isLoading, isError } = useGetUsersQuery();
-    const [createUser] = useCreateUserMutation();
+    const navigate = useNavigate();
 
     if (isLoading) {
         return (
@@ -56,18 +57,7 @@ const Users = () => {
             <div className="mt-6">
                 <button
                     className="px-3 py-2 bg-primary-600 text-white rounded"
-                    onClick={async () => {
-                        const name = prompt('Nombre completo del usuario');
-                        const email = prompt('Email');
-                        const roleInput = prompt('Rol (user, service, admin)', 'user');
-                        const role = (roleInput || 'user') as any;
-                        if (!name || !email) return alert('Nombre y email son requeridos');
-                        try {
-                            await createUser({ name, email, role }).unwrap();
-                        } catch (e: any) {
-                            alert(e?.data?.message || e?.message || 'Error al crear usuario');
-                        }
-                    }}
+                    onClick={() => navigate('/users/new')}
                 >Nuevo usuario</button>
             </div>
         </div>
