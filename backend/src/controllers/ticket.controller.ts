@@ -35,10 +35,9 @@ export const createTicket = async (req: Request, res: Response): Promise<void> =
 };
 
 export const getTickets = async (req: Request, res: Response): Promise<void> => {
-    const _query = req.query as unknown as ListTicketsQuery;
-    // TODO: paginación y filtros(abierto, cerrado, prioridad, fecha creación)
+    const { status, priority } = req.query as Partial<ListTicketsQuery>;
     try {
-        const tickets = await ticketService.getTickets();
+        const tickets = await ticketService.getTickets({ status, priority });
         res.status(200).json(tickets);
         return;
     } catch (error: any) {

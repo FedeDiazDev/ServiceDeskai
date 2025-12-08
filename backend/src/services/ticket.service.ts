@@ -58,8 +58,11 @@ export class TicketService {
         return populated as ITicket;
     }
 
-    async getTickets(): Promise<ITicket[]> {
-        const tickets : ITicket[] | null = await TicketModel.find()
+    async getTickets(filters?: { status?: string; priority?: string }): Promise<ITicket[]> {
+        const query: any = {};
+        if (filters?.status) query.status = filters.status;
+        if (filters?.priority) query.priority = filters.priority;
+        const tickets : ITicket[] | null = await TicketModel.find(query)
             .populate('createdBy', 'name surname')
             .populate('assignedTo', 'name surname')
             .populate('office', 'name');

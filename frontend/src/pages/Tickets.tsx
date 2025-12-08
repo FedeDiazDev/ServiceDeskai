@@ -47,8 +47,7 @@ export default function Tickets() {
                 <div className="text-sm text-gray-500">{tickets?.length ?? 0} resultados</div>
             </div>
 
-            {/* Filters */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+¡            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
                 <div className="flex items-center gap-2 flex-wrap">
                     {statusOptions.map((opt) => (
                         <button
@@ -65,7 +64,7 @@ export default function Tickets() {
                     <select
                         value={priorityFilter || ''}
                         onChange={(e) => setPriorityFilter(e.target.value || undefined)}
-                        className="px-3 py-1 border rounded text-sm bg-white dark:bg-dark-surface"
+                        className="px-3 py-1 border rounded text-sm  text-gray-900 dark:text-dark-text-main bg-white dark:bg-dark-surface"
                     >
                         <option value="">Todas prioridades</option>
                         <option value="low">Low</option>
