@@ -33,4 +33,3 @@ export const aiApi = api.injectEndpoints({
 
 export const { useAnalyzeImageMutation } = aiApi;
 
-export type { GeneratedTicketData };

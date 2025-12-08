@@ -12,14 +12,14 @@ import TicketSummary from "../components/tickets/TicketSummary";
 
 export default function NewTicket() {
     const navigate = useNavigate();
-    
+
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
-    
+
     const [ticketData, setTicketData] = useState<GeneratedTicketData | null>(null);
     const [geolocation, setGeolocation] = useState<Geolocation | null>(null);
-    
+
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isRejection, setIsRejection] = useState(false);
@@ -62,16 +62,13 @@ export default function NewTicket() {
             const imageDataUrl = await imageToBase64(file);
             const base64 = imageDataUrl.split(',')[1];
             const result = await analyzeImageMutation({ image: base64, mimeType: file.type }).unwrap();
-            // Log visual para depuración
-            console.log('AI analysis result:', result);
+
             if (result?.isValid && result.data) {
                 setTicketData(result.data);
                 toast.success('Imagen analizada correctamente');
-                // La preview nunca se borra en éxito
             } else {
                 setError(result?.message || 'La imagen fue rechazada por la IA');
                 setIsRejection(true);
-                // La preview se mantiene para que el usuario vea la imagen rechazada
             }
         } catch (err: any) {
             const status = err?.status;
