@@ -1,11 +1,19 @@
 import { api } from './api';
 import { TicketPriority } from '../types/ticket';
 
+
 export interface GeneratedTicketData {
   title: string;
   description: string;
   priority: TicketPriority;
   tags: string[];
+}
+
+export interface AnalyzeImageResponse {
+  success: boolean;
+  isValid: boolean;
+  data?: GeneratedTicketData;
+  message?: string;
 }
 
 export class ImageRejectedError extends Error {
@@ -17,7 +25,7 @@ export class ImageRejectedError extends Error {
 
 export const aiApi = api.injectEndpoints({
   endpoints: (build) => ({
-    analyzeImage: build.mutation<GeneratedTicketData, { image: string; mimeType: string }>({
+    analyzeImage: build.mutation<AnalyzeImageResponse, { image: string; mimeType: string }>({
       query: (body) => ({ url: '/ai/analyze', method: 'POST', body }),
     }),
   }),

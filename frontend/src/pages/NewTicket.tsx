@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useCreateTicketMutation } from '../services/ticketsApi';
 import { useAnalyzeImageMutation } from '../services/aiApi';
@@ -61,15 +62,26 @@ export default function NewTicket() {
             const imageDataUrl = await imageToBase64(file);
             const base64 = imageDataUrl.split(',')[1];
             const result = await analyzeImageMutation({ image: base64, mimeType: file.type }).unwrap();
-            setTicketData(result);
+            // Log visual para depuración
+            console.log('AI analysis result:', result);
+            if (result?.isValid && result.data) {
+                setTicketData(result.data);
+                toast.success('Imagen analizada correctamente');
+                // La preview nunca se borra en éxito
+            } else {
+                setError(result?.message || 'La imagen fue rechazada por la IA');
+                setIsRejection(true);
+                // La preview se mantiene para que el usuario vea la imagen rechazada
+            }
         } catch (err: any) {
             const status = err?.status;
             const data = err?.data;
-            if (status === 400 && data?.isValid === false) {
-                setError(data?.message || 'Image rejected by AI');
+            if (data?.isValid === false) {
+                setError(data?.message || 'La imagen fue rechazada por la IA');
                 setIsRejection(true);
+                // La preview se mantiene para que el usuario vea la imagen rechazada
             } else {
-                setError(data?.message || err.message || 'Error analyzing image');
+                setError(data?.message || err.message || 'Error analizando la imagen');
                 setImagePreview(null);
                 setImageFile(null);
             }
@@ -97,21 +109,22 @@ export default function NewTicket() {
 
     const handleSubmit = async () => {
         if (!ticketData || !imageFile) return;
-        
         setError(null);
         setIsLoading(true);
 
         try {
             const imageBase64 = await imageToBase64(imageFile);
-
             await createTicket({
                 ...ticketData,
                 attachments: [imageBase64],
                 geolocation: geolocation || undefined,
             }).unwrap();
+            toast.success('Ticket creado correctamente');
             navigate('/tickets');
         } catch (err: any) {
-            setError(err.data?.message || err.message || 'Error creating ticket');
+            const msg = err.data?.message || err.message || 'Error creando ticket';
+            setError(msg);
+            toast.error(msg);
         } finally {
             setIsLoading(false);
         }
