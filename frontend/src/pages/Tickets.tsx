@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import TicketCard from "../components/tickets/TicketCard";
 import { Ticket, TicketStatus } from "../types/ticket";
@@ -60,20 +61,26 @@ export default function Tickets() {
                     ))}
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 relative">
                     <select
                         value={priorityFilter || ''}
                         onChange={(e) => setPriorityFilter(e.target.value || undefined)}
-                        className="px-3 py-1 border rounded text-sm  text-gray-900 dark:text-dark-text-main bg-white dark:bg-dark-surface"
+                        className="px-3 py-1 border rounded text-sm text-gray-900 dark:text-dark-text-main bg-white dark:bg-dark-surface focus:ring-2 focus:ring-primary-500"
                     >
                         <option value="">Todas prioridades</option>
                         <option value="low">Low</option>
                         <option value="medium">Medium</option>
                         <option value="high">High</option>
                     </select>
-                    { (statusFilter || priorityFilter) && (
-                        <button onClick={() => { setStatusFilter(undefined); setPriorityFilter(undefined); }} className="text-sm text-gray-500 underline">Reset</button>
-                    ) }
+                    {(statusFilter || priorityFilter) && (
+                        <button
+                            onClick={() => { setStatusFilter(undefined); setPriorityFilter(undefined); }}
+                            className="ml-1 p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-primary-100 dark:hover:bg-primary-900/20 border border-gray-300 dark:border-dark-border text-gray-500 hover:text-primary-600 transition-colors flex items-center justify-center"
+                            title="Reset filtros"
+                        >
+                            <X className="h-4 w-4" />
+                        </button>
+                    )}
                 </div>
             </div>
 
