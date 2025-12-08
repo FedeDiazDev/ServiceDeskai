@@ -48,7 +48,7 @@ export default function Tickets() {
                 <div className="text-sm text-gray-500">{tickets?.length ?? 0} resultados</div>
             </div>
 
-¡            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
                 <div className="flex items-center gap-2 flex-wrap">
                     {statusOptions.map((opt) => (
                         <button

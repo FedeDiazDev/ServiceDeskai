@@ -6,11 +6,18 @@ interface CreateTicketData extends CreateTicketInput {
     createdBy: string;
 }
 
+interface TicketFilters {
+    status?: string;
+    priority?: string;
+    createdBy?: string;
+}
+
+
 export class TicketService {
 
     private async findLeastBusyServiceUser(): Promise<string | null> {
         const serviceUsers = await UserModel.find({ role: 'service' }).select('_id');
-        
+
         if (serviceUsers.length === 0) {
             return null;
         }
@@ -34,7 +41,7 @@ export class TicketService {
 
         const assignedTo = await this.findLeastBusyServiceUser();
 
-        const newTicket : ITicket | null = await TicketModel.create({
+        const newTicket: ITicket | null = await TicketModel.create({
             title,
             description,
             priority,
@@ -58,22 +65,25 @@ export class TicketService {
         return populated as ITicket;
     }
 
-    async getTickets(filters?: { status?: string; priority?: string }): Promise<ITicket[]> {
+    async getTickets(filters?: TicketFilters): Promise<ITicket[]> {
         const query: any = {};
         if (filters?.status) query.status = filters.status;
         if (filters?.priority) query.priority = filters.priority;
-        const tickets : ITicket[] | null = await TicketModel.find(query)
+        if (filters?.createdBy) query.createdBy = filters.createdBy;
+        const tickets: ITicket[] | null = await TicketModel.find(query)
+            .sort({ createdAt: -1 })
             .populate('createdBy', 'name surname')
             .populate('assignedTo', 'name surname')
             .populate('office', 'name');
+
         if (!tickets) {
-            throw new Error('TICKETS_NOT_FOUND');
+            return [];
         }
         return tickets;
     }
 
     async getTicketById(ticketId: string): Promise<ITicket> {
-        const ticket : ITicket | null = await TicketModel.findById(ticketId)
+        const ticket: ITicket | null = await TicketModel.findById(ticketId)
             .populate('createdBy', 'name surname')
             .populate('assignedTo', 'name surname')
             .populate('office', 'name');
@@ -84,7 +94,7 @@ export class TicketService {
     }
 
     async updateTicket(ticketId: string, updateData: UpdateTicketInput): Promise<ITicket> {
-        const updatedTicket : ITicket | null = await TicketModel.findByIdAndUpdate(ticketId, updateData as any, { new: true });
+        const updatedTicket: ITicket | null = await TicketModel.findByIdAndUpdate(ticketId, updateData as any, { new: true });
         if (!updatedTicket) {
             throw new Error('TICKET_UPDATE_FAILED');
         }
@@ -117,7 +127,7 @@ export class TicketService {
     }
 
     async deleteTicket(ticketId: string): Promise<ITicket> {
-        const deletedTicket : ITicket | null = await TicketModel.findByIdAndDelete(ticketId);
+        const deletedTicket: ITicket | null = await TicketModel.findByIdAndDelete(ticketId);
         if (!deletedTicket) {
             throw new Error('TICKET_DELETION_FAILED');
         }

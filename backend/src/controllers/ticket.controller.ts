@@ -36,8 +36,14 @@ export const createTicket = async (req: Request, res: Response): Promise<void> =
 
 export const getTickets = async (req: Request, res: Response): Promise<void> => {
     const { status, priority } = req.query as Partial<ListTicketsQuery>;
+    const user = req.user as { id: string; role: string };
     try {
-        const tickets = await ticketService.getTickets({ status, priority });
+        let filters: any = { status, priority };
+        Object.keys(filters).forEach(key => filters[key] === undefined && delete filters[key]);
+        if (user.role === 'user') {
+            filters.createdBy = user.id;
+        }
+        const tickets = await ticketService.getTickets(filters);
         res.status(200).json(tickets);
         return;
     } catch (error: any) {
