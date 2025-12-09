@@ -10,6 +10,7 @@ import Offices from '../pages/admin/Offices';
 import CreateUser from '../pages/CreateUser';
 import CreateOffice from '../pages/CreateOffice';
 import Settings from '../pages/Settings';
+import NotFoundPage from '../pages/404';
 
 export const router = createBrowserRouter([
   {
@@ -46,4 +47,5 @@ export const router = createBrowserRouter([
   },
 
   { path: '/', element: <Navigate to="/tickets" replace /> },
+  { path: '*', element: <NotFoundPage /> },
 ]);
