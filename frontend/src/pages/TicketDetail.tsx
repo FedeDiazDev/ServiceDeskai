@@ -6,6 +6,7 @@ import { Mail, Send, Play, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { useSendReportEmailMutation } from '../services/reportApi';
 import { TicketStatus } from '../types/ticket';
 import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-hot-toast';
 
 export default function TicketDetail() {
     const { id } = useParams();
@@ -20,15 +21,28 @@ export default function TicketDetail() {
     const [sendReportEmail, { isLoading: sending, isSuccess, isError: isSendError, error }] = useSendReportEmailMutation();
     const handleSendEmail = async () => {
         if (!id || !emailTo) return;
-        await sendReportEmail({ ticketId: id, to: emailTo });
+
+        try {
+            await sendReportEmail({ ticketId: id, to: emailTo }).unwrap();
+
+            toast.success('Email sent successfully');
+            setShowEmailInput(false);
+            setEmailTo("");
+        } catch (err: any) {
+            console.error(err);
+            const errorMessage = err?.data?.message || 'Error sending email';
+            toast.error(errorMessage);
+        }
     };
 
     const handleStatusChange = async (newStatus: TicketStatus) => {
         if (!ticket || !id) return;
         try {
             await updateStatus({ id: id as string, status: newStatus }).unwrap();
-        } catch (err) {
+            toast.success(`Status updated to ${newStatus.replace('_', ' ')}`);
+        } catch (err: any) {
             console.error('Failed to update status', err);
+            toast.error('Could not update status');
         }
     };
 
@@ -65,7 +79,7 @@ export default function TicketDetail() {
             <div className="flex flex-col gap-4">
                 <TicketDetailCard {...ticket} />
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
                     <button
                         className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg bg-primary-600 text-white shadow hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-400 transition"
                         onClick={() => setShowEmailInput((v) => !v)}
@@ -74,15 +88,14 @@ export default function TicketDetail() {
                         Share by email
                     </button>
                     {showEmailInput && (
-                        <div className="flex items-center gap-2">
-                            <input
-                                type="email"
-                                placeholder="Recipient email"
-                                value={emailTo}
-                                onChange={e => setEmailTo(e.target.value)}
-                                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary-400 focus:border-primary-400 transition w-56"
-                                disabled={sending}
-                            />
+                        <div className="flex flex-row sm:flex-row items-start sm:items-center gap-3">                            <input
+                            type="email"
+                            placeholder="Recipient email"
+                            value={emailTo}
+                            onChange={e => setEmailTo(e.target.value)}
+                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary-400 focus:border-primary-400 transition w-56"
+                            disabled={sending}
+                        />
                             <button
                                 className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg bg-green-600 text-white shadow hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 transition"
                                 onClick={handleSendEmail}
@@ -93,8 +106,6 @@ export default function TicketDetail() {
                             </button>
                         </div>
                     )}
-                    {isSuccess && <span className="text-sm text-green-600">Email sent successfully</span>}
-                    {isError && <span className="text-sm text-red-600">{(error as any)?.data?.message || 'Error sending email'}</span>}
                 </div>
 
                 {canManage && (
