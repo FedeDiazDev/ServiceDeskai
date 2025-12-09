@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode } from 'react';
 import { useGetMeQuery, useLoginMutation, useLogoutMutation } from '../services/authApi';
 import { User as ServiceUser } from '../services/userService';
 
@@ -16,30 +16,28 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
-    if (!context) throw new Error('...');
+    if (!context) throw new Error('useAuth must be used within AuthProvider');
     return context;
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [user, setUser] = useState<User | null>(null);
-    const { data, isFetching } = useGetMeQuery();
+    const [localUser, setLocalUser] = useState<User | null | undefined>(undefined);
+    const { data, isLoading: isQueryLoading } = useGetMeQuery();
     const [loginMutation] = useLoginMutation();
     const [logoutMutation] = useLogoutMutation();
 
-    useEffect(() => {
-        setUser(data?.user ?? null);
-    }, [data]);
+    const user = localUser !== undefined ? localUser : (data?.user ?? null);
 
-    const isLoading = isFetching;
+    const isLoading = isQueryLoading && localUser === undefined;
 
     const login = async (email: string, password: string) => {
         const response = await loginMutation({ email, password }).unwrap();
-        setUser(response.user);
+        setLocalUser(response.user);
     };
 
     const logout = async () => {
         await logoutMutation().unwrap();
-        setUser(null);
+        setLocalUser(null);
     };
 
     const hasRole = (roles: string[]) => {

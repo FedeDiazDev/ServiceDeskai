@@ -4,13 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { useCreateTicketMutation } from '../services/ticketsApi';
 import { useAnalyzeImageMutation } from '../services/aiApi';
 import { GeneratedTicketData } from '../services/aiApi';
-import { useGetOfficesForCityQuery, getUserCity } from '../services/geolocationApi';
+import { useGetOfficesForCityQuery, getUserLocation, UserLocation } from '../services/geolocationApi';
 import { Office } from '../services/officeService';
 import Button from "../components/common/Button";
 import ImageDropzone from "../components/tickets/ImageDropzone";
 import ImagePreview from "../components/tickets/ImagePreview";
 import TicketSummary from "../components/tickets/TicketSummary";
-import { MapPin, Building2, ChevronDown } from "lucide-react";
+import { MapPin, Building2, ChevronDown, Navigation } from "lucide-react";
 
 export default function NewTicket() {
     const navigate = useNavigate();
@@ -22,6 +22,7 @@ export default function NewTicket() {
     const [ticketData, setTicketData] = useState<GeneratedTicketData | null>(null);
     const [selectedOffice, setSelectedOffice] = useState<Office | null>(null);
     const [detectedCity, setDetectedCity] = useState<string | undefined>(undefined);
+    const [locationSource, setLocationSource] = useState<'gps' | 'ip' | 'none'>('none');
     const [isDetectingCity, setIsDetectingCity] = useState(true);
 
     const [isLoading, setIsLoading] = useState(false);
@@ -31,23 +32,21 @@ export default function NewTicket() {
     const [createTicket, { isLoading: creating }] = useCreateTicketMutation();
     const [analyzeImageMutation, { isLoading: analyzeLoading }] = useAnalyzeImageMutation();
 
-    // Fetch offices based on detected city
     const { data: locationData, isLoading: isLoadingOffices } = useGetOfficesForCityQuery(detectedCity, {
-        skip: isDetectingCity // Wait until city is detected
+        skip: isDetectingCity
     });
 
-    // Detect user's city from ip-api (frontend call)
     useEffect(() => {
-        const detectCity = async () => {
+        const detectLocation = async () => {
             setIsDetectingCity(true);
-            const city = await getUserCity();
-            setDetectedCity(city || undefined);
+            const location = await getUserLocation();
+            setDetectedCity(location.city || undefined);
+            setLocationSource(location.source);
             setIsDetectingCity(false);
         };
-        detectCity();
+        detectLocation();
     }, []);
 
-    // Auto-select office when only one is available
     useEffect(() => {
         if (locationData?.offices && locationData.offices.length === 1) {
             setSelectedOffice(locationData.offices[0]);
@@ -86,7 +85,6 @@ export default function NewTicket() {
             if (data?.isValid === false) {
                 setError(data?.message || 'Image was rejected by AI');
                 setIsRejection(true);
-                // La preview se mantiene para que el usuario vea la imagen rechazada
             } else {
                 setError(data?.message || err.message || 'Error analyzing image');
                 setImagePreview(null);
@@ -173,9 +171,16 @@ export default function NewTicket() {
 
                 {cityName && (
                     <div className="flex items-center gap-2 mb-3 text-sm">
-                        <MapPin className="w-4 h-4 text-gray-400" />
+                        {locationSource === 'gps' ? (
+                            <Navigation className="w-4 h-4 text-green-500" />
+                        ) : (
+                            <MapPin className="w-4 h-4 text-gray-400" />
+                        )}
                         <span className="text-gray-600 dark:text-dark-text-muted">
                             Detected location: <span className="font-medium text-gray-900 dark:text-dark-text-main">{cityName}</span>
+                            <span className="ml-2 text-xs text-gray-400">
+                                ({locationSource === 'gps' ? 'GPS' : 'IP-based'})
+                            </span>
                         </span>
                     </div>
                 )}
@@ -231,7 +236,6 @@ export default function NewTicket() {
                 New Ticket
             </h1>
 
-            {/* Office Selector - always visible */}
             <div className="mb-6">
                 {renderOfficeSelector()}
             </div>

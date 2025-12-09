@@ -51,7 +51,7 @@ export const me = async (req: Request, res: Response): Promise<void> => {
     const token = req.cookies.token;
 
     if (!token) {
-        res.status(401).json({ message: 'No token provided' });
+        res.json({ user: null });
         return;
     }
 
@@ -59,12 +59,14 @@ export const me = async (req: Request, res: Response): Promise<void> => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string; role: string };
         const user = await authService.me(decoded.id);
         if (!user) {
-            res.status(404).json({ message: 'User not found' });
+            res.clearCookie('token');
+            res.json({ user: null });
             return;
         }
         res.json({ user });
     } catch {
-        res.status(401).json({ message: 'Invalid token' });
+        res.clearCookie('token');
+        res.json({ user: null });
     }
 };
 
