@@ -4,6 +4,7 @@ interface UserProfile {
     name: string;
     surname: string;
     email: string;
+    officeName: string;
     role: string;
     office?: string | { name: string };
 }
@@ -16,7 +17,7 @@ export default function ProfileCard({ user }: ProfileCardProps) {
     if (!user) return null;
 
     const initials = `${user.name?.[0] || ''}${user.surname?.[0] || ''}`.toUpperCase();
-    const officeName = typeof user.office === 'string' ? user.office : user.office?.name;
+    const officeName = typeof user.office === 'string' ? user.officeName : user.office?.name;
 
     return (
         <div className="bg-white dark:bg-dark-surface rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-dark-border">

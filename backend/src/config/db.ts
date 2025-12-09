@@ -83,15 +83,16 @@ const seedDatabase = async () => {
       email: 'admin@deskai.com',
       password: hashedPassword,
       role: 'admin',
-      office: offices[0]._id
+      office: offices[0]._id,
+      officeName: offices[0].name,
     });
     console.log('Admin created: admin@deskai.com');
 
     const normalUsers = [
-      { name: 'Juan', surname: 'García', email: 'juan@deskai.com', office: offices[0]._id },
-      { name: 'María', surname: 'López', email: 'maria@deskai.com', office: offices[1]._id },
-      { name: 'Carlos', surname: 'Martínez', email: 'carlos@deskai.com', office: offices[2]._id },
-      { name: 'Ana', surname: 'Fernández', email: 'ana@deskai.com', office: offices[3]._id }
+      { name: 'Juan', surname: 'García', email: 'juan@deskai.com', office: offices[0]._id, officeName: offices[0].name },
+      { name: 'María', surname: 'López', email: 'maria@deskai.com', office: offices[1]._id , officeName: offices[1].name},
+      { name: 'Carlos', surname: 'Martínez', email: 'carlos@deskai.com', office: offices[2]._id, officeName: offices[2].name },
+      { name: 'Ana', surname: 'Fernández', email: 'ana@deskai.com', office: offices[3]._id, officeName: offices[3].name }
     ];
 
     for (const user of normalUsers) {
@@ -104,10 +105,10 @@ const seedDatabase = async () => {
     console.log('normal users created ');
 
     const serviceUsers = [
-      { name: 'Pedro', surname: 'Sánchez', email: 'pedro.service@deskai.com', office: offices[0]._id },
-      { name: 'Laura', surname: 'Ruiz', email: 'laura.service@deskai.com', office: offices[1]._id },
-      { name: 'Miguel', surname: 'Hernández', email: 'miguel.service@deskai.com', office: offices[2]._id },
-      { name: 'Sofia', surname: 'Díaz', email: 'sofia.service@deskai.com', office: offices[3]._id }
+      { name: 'Pedro', surname: 'Sánchez', email: 'pedro.service@deskai.com', office: offices[0]._id, officeName: offices[0].name },
+      { name: 'Laura', surname: 'Ruiz', email: 'laura.service@deskai.com', office: offices[1]._id, officeName: offices[1].name },
+      { name: 'Miguel', surname: 'Hernández', email: 'miguel.service@deskai.com', office: offices[2]._id, officeName: offices[2].name },
+      { name: 'Sofia', surname: 'Díaz', email: 'sofia.service@deskai.com', office: offices[3]._id, officeName: offices[3].name }
     ];
 
     for (const user of serviceUsers) {

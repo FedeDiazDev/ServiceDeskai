@@ -4,7 +4,7 @@ import ProfileCard from '../components/settings/ProfileCard';
 import AdminSection from '../components/settings/AdminSection';
 
 export default function Settings() {
-    const { user } = useAuth();
+    const { user } = useAuth();    
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {

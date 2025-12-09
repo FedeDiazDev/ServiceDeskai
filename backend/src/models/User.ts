@@ -7,6 +7,7 @@ export interface IUser extends Document {
     password: string;
     role: 'admin' | 'user' | 'service';
     office?: Types.ObjectId;
+    officeName: string;
     avatarUrl?: string;
 }
 
@@ -17,6 +18,7 @@ export interface UserResponse {
     email: string;
     role: 'admin' | 'user' | 'service';
     office?: string;
+    officeName: string;
     avatarUrl?: string;
 }
 
@@ -27,6 +29,7 @@ export const toUserResponse = (user: IUser): UserResponse => ({
     email: user.email,
     role: user.role,
     office: user.office?.toString(),
+    officeName: user.officeName,
     avatarUrl: user.avatarUrl
 });
 const userSchema = new Schema<IUser>({
@@ -36,6 +39,7 @@ const userSchema = new Schema<IUser>({
     password: { type: String, required: true, trim: true },
     role: { type: String, enum: ['admin', 'user', 'service'], lowercase: true, trim: true, default: 'user' },
     office: { type: Schema.Types.ObjectId, ref: 'Office' },
+    officeName: { type: String },
     avatarUrl: { type: String }
 }, { timestamps: true });
 
