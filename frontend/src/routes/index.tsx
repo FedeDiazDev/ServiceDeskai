@@ -26,8 +26,8 @@ export const router = createBrowserRouter([
         element: <Layout />,
         children: [
           { path: '/tickets', element: <Tickets /> },
-          { path: '/tickets/new', element: <NewTicket /> },
           { path: '/tickets/:id', element: <TicketDetail /> },
+          { path: '/tickets/new', element: <NewTicket /> },
 
           {
             element: <RoleRoute allowedRoles={['admin']} />,
@@ -45,5 +45,5 @@ export const router = createBrowserRouter([
     ],
   },
 
-  { path: '/', element: <Navigate to="/tickets" replace /> },
+  { path: '/', element: <Navigate to="/tickets" /> },
 ]);

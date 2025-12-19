@@ -30,6 +30,10 @@ export const Login = () => {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-dark-bg px-4">
             <div className="bg-white dark:bg-dark-surface p-8 rounded-xl shadow-md w-full max-w-md">
+                <div className="text-center mb-8">
+                    <h1 className="text-3xl font-bold text-primary-600 dark:text-primary-400">ServiceDeskAI</h1>
+                    <p className="text-gray-500 dark:text-dark-text-muted mt-2">Intelligent Ticket Management</p>
+                </div>
                 <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-dark-text-main">Sign In</h2>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <Input

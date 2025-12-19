@@ -12,6 +12,32 @@ A modern IT Service Desk application powered by AI for automated ticket creation
 - **Dark Mode** - Full dark/light theme support
 - **Responsive Design** - Works on desktop and mobile devices
 
+## 📸 Screenshots
+
+### Desktop
+
+| Home Dashboard | Ticket Creation |
+|:---:|:---:|
+| ![Home Dashboard](assets/images_desktop/home.png) | ![Ticket Creation](assets/images_desktop/newTicket.png) |
+
+| Ticket Details | Office Management |
+|:---:|:---:|
+| ![Ticket Details](assets/images_desktop/details.png) | ![Office Management](assets/images_desktop/office.png) |
+
+| Settings | |
+|:---:|:---:|
+| ![Settings](assets/images_desktop/settings.png) | |
+
+### Mobile
+
+| Login | Home | Ticket Creation |
+|:---:|:---:|:---:|
+| ![Login](assets/images_mobile/login.png) | ![Home](assets/images_mobile/home.png) | ![Ticket Creation](assets/images_mobile/new_ticket.png) |
+
+| Ticket Details | Office Management | Settings |
+|:---:|:---:|:---:|
+| ![Ticket Details](assets/images_mobile/details.png) | ![Office Management](assets/images_mobile/offices.png) | ![Settings](assets/images_mobile/settings.png) |
+
 ## 🛠️ Tech Stack
 
 ### Backend
