@@ -19,14 +19,6 @@ app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
 
 
-app.get('/api/test', (req: Request, res: Response) => {
-  res.json({ message: 'Test route working' });
-});
-
-app.get('/', (req: Request, res: Response) => {
-  res.json({ message: 'Hello World' });
-});
-
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error(err);
   res.status(500).json({ error: 'Internal server error' });

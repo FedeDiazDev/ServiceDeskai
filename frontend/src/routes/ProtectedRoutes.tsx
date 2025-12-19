@@ -10,7 +10,7 @@ export const PrivateRoute = () => {
 export const RoleRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
     const { user, isLoading, hasRole } = useAuth();
     if (isLoading) return <div>Loading...</div>;
-    return hasRole(allowedRoles) ? <Outlet /> : <Navigate to="/unauthorized" replace />;
+    return hasRole(allowedRoles) ? <Outlet /> : <Navigate to="/not-found" replace />;
 }
 
 export const PublicOnlyRoute = () => {

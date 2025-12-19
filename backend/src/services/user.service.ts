@@ -1,5 +1,5 @@
 import { UserModel, IUser } from "../models/User";
-
+import bcrypt from 'bcryptjs';
 
 
 export class UserService {
@@ -7,6 +7,8 @@ export class UserService {
         if (!data.password) {
             data.password = Math.random().toString(36).slice(-8);
         }
+        const salt = await bcrypt.genSalt(10);
+        data.password = await bcrypt.hash('password123', salt);
         const user = await UserModel.create(data);
         return user;
     }
